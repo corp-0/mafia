@@ -1,0 +1,43 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mafia", "mafia.csproj", "{70CE9530-83F6-451D-94A8-32A088FD2945}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mafia.Core", "src\Mafia.Core\Mafia.Core.csproj", "{8A963A08-DDD2-4932-ACD0-AD73EAC1239A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mafia.Generators", "src\Mafia.Generators\Mafia.Generators.csproj", "{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mafia.Core.Tests", "src\Mafia.Core.Tests\Mafia.Core.Tests.csproj", "{B2C3D4E5-F6A7-8901-2345-6789ABCDEF01}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		ExportDebug|Any CPU = ExportDebug|Any CPU
+		ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{70CE9530-83F6-451D-94A8-32A088FD2945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70CE9530-83F6-451D-94A8-32A088FD2945}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70CE9530-83F6-451D-94A8-32A088FD2945}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{70CE9530-83F6-451D-94A8-32A088FD2945}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{70CE9530-83F6-451D-94A8-32A088FD2945}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{70CE9530-83F6-451D-94A8-32A088FD2945}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{8A963A08-DDD2-4932-ACD0-AD73EAC1239A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A963A08-DDD2-4932-ACD0-AD73EAC1239A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A963A08-DDD2-4932-ACD0-AD73EAC1239A}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A963A08-DDD2-4932-ACD0-AD73EAC1239A}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{8A963A08-DDD2-4932-ACD0-AD73EAC1239A}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A963A08-DDD2-4932-ACD0-AD73EAC1239A}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-1234-567890ABCDEF}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
+		{B2C3D4E5-F6A7-8901-2345-6789ABCDEF01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-2345-6789ABCDEF01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-2345-6789ABCDEF01}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-2345-6789ABCDEF01}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-2345-6789ABCDEF01}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-2345-6789ABCDEF01}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+EndGlobal

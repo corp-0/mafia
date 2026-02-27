@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Content\Registries\" />
+      <Folder Include="Ecs\Components\Tags\" />
+      <Folder Include="Ecs\Systems\Ticker\" />
+      <Folder Include="Events\Definition\" />
+      <Folder Include="Events\Engine\" />
+      <Folder Include="Opinions\Calculator\" />
+      <Folder Include="Opinions\Rules\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="fennecs" Version="0.6.8" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Mafia.Generators\Mafia.Generators.csproj"
+                        OutputItemType="Analyzer"
+                        ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+</Project>
