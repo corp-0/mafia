@@ -8,34 +8,43 @@ namespace Mafia.Core.Time;
 /// </summary>
 public readonly struct GameDate : IEquatable<GameDate>, IComparable<GameDate>
 {
-    private readonly int _totalDays;
+    private readonly int _totalHours;
 
     public int Year { get; }
     public int Month { get; }
     public int Day { get; }
+    public int Hour { get; }
 
-    public GameDate(int year, int month, int day)
+    public GameDate(int year, int month, int day, int hour = 0)
     {
         Year = year;
         Month = month;
         Day = day;
-        _totalDays = ToDays(year, month, day);
+        Hour = hour;
+        _totalHours = ToDays(year, month, day) * 24 + hour;
     }
 
-    private GameDate(int year, int month, int day, int totalDays)
+    private GameDate(int year, int month, int day, int hour, int totalHours)
     {
         Year = year;
         Month = month;
         Day = day;
-        _totalDays = totalDays;
+        Hour = hour;
+        _totalHours = totalHours;
     }
 
-    public int DaysSince(GameDate other) => _totalDays - other._totalDays;
+    public int DaysSince(GameDate other) => (_totalHours - other._totalHours) / 24;
 
-    public GameDate AddDays(int days)
+    public int HoursSince(GameDate other) => _totalHours - other._totalHours;
+
+    public GameDate AddDays(int days) => AddHours(days * 24);
+
+    public GameDate AddHours(int hours)
     {
-        var dt = ToDateTime().AddDays(days);
-        return new GameDate(dt.Year, dt.Month, dt.Day, _totalDays + days);
+        var newTotal = _totalHours + hours;
+        var totalDays = Math.DivRem(newTotal, 24, out var newHour);
+        var dt = DateTime.MinValue.AddDays(totalDays);
+        return new GameDate(dt.Year, dt.Month, dt.Day, newHour, newTotal);
     }
 
     public static GameDate Parse(string s)
@@ -57,19 +66,21 @@ public readonly struct GameDate : IEquatable<GameDate>, IComparable<GameDate>
     }
 
     // Comparison operators
-    public int CompareTo(GameDate other) => _totalDays.CompareTo(other._totalDays);
-    public bool Equals(GameDate other) => _totalDays == other._totalDays;
+    public int CompareTo(GameDate other) => _totalHours.CompareTo(other._totalHours);
+    public bool Equals(GameDate other) => _totalHours == other._totalHours;
     public override bool Equals(object? obj) => obj is GameDate other && Equals(other);
-    public override int GetHashCode() => _totalDays;
+    public override int GetHashCode() => _totalHours;
 
-    public static bool operator ==(GameDate left, GameDate right) => left._totalDays == right._totalDays;
-    public static bool operator !=(GameDate left, GameDate right) => left._totalDays != right._totalDays;
-    public static bool operator <(GameDate left, GameDate right) => left._totalDays < right._totalDays;
-    public static bool operator >(GameDate left, GameDate right) => left._totalDays > right._totalDays;
-    public static bool operator <=(GameDate left, GameDate right) => left._totalDays <= right._totalDays;
-    public static bool operator >=(GameDate left, GameDate right) => left._totalDays >= right._totalDays;
+    public static bool operator ==(GameDate left, GameDate right) => left._totalHours == right._totalHours;
+    public static bool operator !=(GameDate left, GameDate right) => left._totalHours != right._totalHours;
+    public static bool operator <(GameDate left, GameDate right) => left._totalHours < right._totalHours;
+    public static bool operator >(GameDate left, GameDate right) => left._totalHours > right._totalHours;
+    public static bool operator <=(GameDate left, GameDate right) => left._totalHours <= right._totalHours;
+    public static bool operator >=(GameDate left, GameDate right) => left._totalHours >= right._totalHours;
 
-    public override string ToString() => $"{Year:D4}-{Month:D2}-{Day:D2}";
+    public override string ToString() => Hour == 0
+        ? $"{Year:D4}-{Month:D2}-{Day:D2}"
+        : $"{Year:D4}-{Month:D2}-{Day:D2} {Hour:D2}:00";
 
     private DateTime ToDateTime() => new(Year, Month, Day);
 

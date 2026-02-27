@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Mafia.Core.Content.Registries;
+using Mafia.Core.Ecs.Relations;
+using Mafia.Core.Events.Engine;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Mafia.Core;
 
@@ -6,11 +9,14 @@ public static class CoreStartup
 {
     public static void ConfigureServices(IServiceCollection services)
     {
-        // Register your core services here
-        // services.AddSingleton<SomeService>();
-        // services.AddScoped<AnotherService>();
-
-        // Example:
-        // services.AddSingleton<IWorld>(new World());
+        services.AddSingleton<IEventDefinitionRepository, EventDefinitionRepository>();
+        services.AddSingleton<IEventHistory, EventHistory>();
+        services.AddSingleton<EventQueue>();
+        services.AddSingleton<MtthCalculator>();
+        services.AddSingleton<AiEventResolver>();
+        services.AddSingleton<EventOrchestrator>();
+        services.AddSingleton<TargetPoolResolver>();
+        services.AddSingleton<PulseTrigger>();
+        services.AddSingleton<StoryBeatTrigger>();
     }
 }

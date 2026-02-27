@@ -5,7 +5,5 @@ public enum RankId
     Associate,
     Soldier,
     Caporegime,
-    Consigliere,
-    UnderBoss,
     Boss
 }

@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="src\Mafia.Core\Mafia.Core.csproj" />
-    <ProjectReference Include="src\Mafia.Generators\Mafia.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

@@ -6,9 +6,6 @@ namespace Mafia.Core.Events.Conditions;
 
 public sealed class DateRange(GameDate earliest, GameDate latest) : IEventCondition
 {
-    public bool Evaluate(EntityScope context)
-    {
-        //TODO: missing implementation of game state and time
-        return false;
-    }
+    public bool Evaluate(EntityScope context) =>
+        context.CurrentDate >= earliest && context.CurrentDate <= latest;
 }

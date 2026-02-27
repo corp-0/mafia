@@ -1,6 +1,8 @@
 ﻿using fennecs;
 using Mafia.Core.Ecs.Components.Rank;
 using Mafia.Core.Ecs.Relations.Interfaces;
+using Mafia.Core.Events.Engine;
+using Mafia.Core.Time;
 
 namespace Mafia.Core.Context;
 
@@ -11,6 +13,18 @@ public sealed partial class EntityScope(World thisWorld)
     public World World => thisWorld;
 
     public event Action<string, EntityScope?>? ChainedEventTriggered;
+
+    /// <summary>
+    /// The current game date at the time of evaluation.
+    /// Set by the orchestrator when constructing the scope.
+    /// </summary>
+    public GameDate CurrentDate { get; init; }
+
+    /// <summary>
+    /// Shared event history for querying past event firings.
+    /// Set by the orchestrator when constructing the scope.
+    /// </summary>
+    public IEventHistory? EventHistory { get; init; }
 
 
     public EntityScope WithAnchor(string name, Entity entity)

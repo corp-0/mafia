@@ -6,3 +6,5 @@ public interface IRelation
 {
     Entity Target { get; init; }
 }
+
+public interface IFamilyRelation : IRelation;

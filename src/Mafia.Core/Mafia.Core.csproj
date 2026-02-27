@@ -11,7 +11,6 @@
       <Folder Include="Content\Registries\" />
       <Folder Include="Ecs\Components\Tags\" />
       <Folder Include="Ecs\Systems\Ticker\" />
-      <Folder Include="Events\Definition\" />
       <Folder Include="Events\Engine\" />
       <Folder Include="Opinions\Calculator\" />
       <Folder Include="Opinions\Rules\" />

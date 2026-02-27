@@ -16,7 +16,7 @@ public class TriggerEvent(string eventId, string? newRootPath = null) : IEventEf
         var root = context.Navigate(newRootPath);
         if (root is not { } entity) return;
 
-        var newScope = new EntityScope(context.World)
+        var newScope = new EntityScope(context.World) { EventHistory = context.EventHistory, CurrentDate = context.CurrentDate }
             .WithAnchor("root", entity);
 
         context.TriggerChainedEvent(eventId, newScope);
