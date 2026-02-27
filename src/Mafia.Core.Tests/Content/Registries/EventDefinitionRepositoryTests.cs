@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Mafia.Core.Content.Registries;
 using Mafia.Core.Events.Definition;
 using Mafia.Core.Time;
@@ -12,8 +13,8 @@ public class EventDefinitionRepositoryTests
     private static PulseEventDefinition MakePulse(string id = "pulse_1") => new()
     {
         Id = id,
-        Title = "Test Pulse",
-        Description = "A pulse event",
+        TitleKey = "Test Pulse",
+        DescriptionKey = "A pulse event",
         MeanTimeToHappenDays = 30,
         Options = []
     };
@@ -21,8 +22,8 @@ public class EventDefinitionRepositoryTests
     private static ActionEventDefinition MakeAction(string id = "action_1", string actionId = "do_thing") => new()
     {
         Id = id,
-        Title = "Test Action",
-        Description = "An action event",
+        TitleKey = "Test Action",
+        DescriptionKey = "An action event",
         OnActionId = actionId,
         Options = []
     };
@@ -30,8 +31,8 @@ public class EventDefinitionRepositoryTests
     private static StoryBeatEventDefinition MakeStoryBeat(string id = "story_1") => new()
     {
         Id = id,
-        Title = "Test Story",
-        Description = "A story beat",
+        TitleKey = "Test Story",
+        DescriptionKey = "A story beat",
         StoryDate = new GameDate(1950, 1, 1),
         Options = []
     };
@@ -44,21 +45,53 @@ public class EventDefinitionRepositoryTests
         var pulse = MakePulse();
         _repo.Register(pulse);
 
-        Assert.Same(pulse, _repo.GetById("pulse_1"));
+        _repo.GetById("pulse_1").Should().BeSameAs(pulse);
     }
 
     [Fact]
     public void GetById_UnknownId_ReturnsNull()
     {
-        Assert.Null(_repo.GetById("nonexistent"));
+        _repo.GetById("nonexistent").Should().BeNull();
     }
 
     [Fact]
-    public void Register_DuplicateId_Throws()
+    public void Register_DuplicateId_UpsertsAndReplacesOldEntry()
     {
-        _repo.Register(MakePulse("dup"));
+        var original = MakePulse("dup");
+        _repo.Register(original);
 
-        Assert.Throws<ArgumentException>(() => _repo.Register(MakePulse("dup")));
+        var replacement = new PulseEventDefinition
+        {
+            Id = "dup",
+            TitleKey = "Replaced",
+            DescriptionKey = "Replaced event",
+            MeanTimeToHappenDays = 99,
+            Options = []
+        };
+        _repo.Register(replacement);
+
+        _repo.GetById("dup").Should().BeSameAs(replacement);
+        _repo.GetAll<PulseEventDefinition>().Should().HaveCount(1);
+    }
+
+    [Fact]
+    public void Register_Upsert_RemovesOldFromActionIndex()
+    {
+        var original = MakeAction("a1", "attack");
+        _repo.Register(original);
+
+        var replacement = new ActionEventDefinition
+        {
+            Id = "a1",
+            TitleKey = "Replaced",
+            DescriptionKey = "Replaced",
+            OnActionId = "defend",
+            Options = []
+        };
+        _repo.Register(replacement);
+
+        _repo.GetByActionId("attack").Should().BeEmpty();
+        _repo.GetByActionId("defend").Should().HaveCount(1);
     }
 
     #endregion
@@ -74,7 +107,7 @@ public class EventDefinitionRepositoryTests
 
         var pulses = _repo.GetAll<PulseEventDefinition>();
 
-        Assert.Equal(2, pulses.Count);
+        pulses.Count.Should().Be(2);
     }
 
     [Fact]
@@ -86,7 +119,7 @@ public class EventDefinitionRepositoryTests
 
         var actions = _repo.GetAll<ActionEventDefinition>();
 
-        Assert.Equal(2, actions.Count);
+        actions.Count.Should().Be(2);
     }
 
     [Fact]
@@ -97,7 +130,7 @@ public class EventDefinitionRepositoryTests
 
         var stories = _repo.GetAll<StoryBeatEventDefinition>();
 
-        Assert.Single(stories);
+        stories.Should().HaveCount(1);
     }
 
     [Fact]
@@ -105,7 +138,7 @@ public class EventDefinitionRepositoryTests
     {
         var pulses = _repo.GetAll<PulseEventDefinition>();
 
-        Assert.Empty(pulses);
+        pulses.Should().BeEmpty();
     }
 
     #endregion
@@ -121,7 +154,7 @@ public class EventDefinitionRepositoryTests
 
         var attack = _repo.GetByActionId("attack");
 
-        Assert.Equal(2, attack.Count);
+        attack.Count.Should().Be(2);
     }
 
     [Fact]
@@ -129,7 +162,7 @@ public class EventDefinitionRepositoryTests
     {
         var result = _repo.GetByActionId("nonexistent");
 
-        Assert.Empty(result);
+        result.Should().BeEmpty();
     }
 
     #endregion

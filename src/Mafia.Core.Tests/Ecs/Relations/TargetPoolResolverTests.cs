@@ -1,3 +1,4 @@
+using FluentAssertions;
 using fennecs;
 using Mafia.Core.Ecs.Components.Rank;
 using Mafia.Core.Ecs.Components.State;
@@ -28,7 +29,7 @@ public class TargetPoolResolverTests : IDisposable
         sub.Add(new SubordinateOf(boss), boss);
     }
 
-    #region root_crew — Capo is crew leader
+    #region root_crew Capo is crew leader
 
     [Fact]
     public void Crew_Capo_ReturnsEntireSubtree()
@@ -45,15 +46,15 @@ public class TargetPoolResolverTests : IDisposable
 
         var crew = _resolver.Resolve("root_crew", capo)!;
 
-        Assert.Equal(3, crew.Count);
-        Assert.Contains(soldier1, crew);
-        Assert.Contains(soldier2, crew);
-        Assert.Contains(associate, crew);
+        crew.Count.Should().Be(3);
+        crew.Should().Contain(soldier1);
+        crew.Should().Contain(soldier2);
+        crew.Should().Contain(associate);
     }
 
     #endregion
 
-    #region root_crew — Soldier/Associate gets whole crew
+    #region root_crew Soldier/Associate gets whole crew
 
     [Fact]
     public void Crew_Soldier_ReturnsWholeCrewExcludingSelf()
@@ -71,11 +72,11 @@ public class TargetPoolResolverTests : IDisposable
         var crew = _resolver.Resolve("root_crew", soldier1)!;
 
         // Capo + soldier2 + associate, but not soldier1 (self)
-        Assert.Equal(3, crew.Count);
-        Assert.Contains(capo, crew);
-        Assert.Contains(soldier2, crew);
-        Assert.Contains(associate, crew);
-        Assert.DoesNotContain(soldier1, crew);
+        crew.Count.Should().Be(3);
+        crew.Should().Contain(capo);
+        crew.Should().Contain(soldier2);
+        crew.Should().Contain(associate);
+        crew.Should().NotContain(soldier1);
     }
 
     [Fact]
@@ -94,11 +95,11 @@ public class TargetPoolResolverTests : IDisposable
         var crew = _resolver.Resolve("root_crew", associate1)!;
 
         // Capo + soldier + associate2, but not associate1 (self)
-        Assert.Equal(3, crew.Count);
-        Assert.Contains(capo, crew);
-        Assert.Contains(soldier, crew);
-        Assert.Contains(associate2, crew);
-        Assert.DoesNotContain(associate1, crew);
+        crew.Count.Should().Be(3);
+        crew.Should().Contain(capo);
+        crew.Should().Contain(soldier);
+        crew.Should().Contain(associate2);
+        crew.Should().NotContain(associate1);
     }
 
     [Fact]
@@ -108,7 +109,7 @@ public class TargetPoolResolverTests : IDisposable
 
         var crew = _resolver.Resolve("root_crew", loner)!;
 
-        Assert.Empty(crew);
+        crew.Should().BeEmpty();
     }
 
     #endregion
@@ -130,16 +131,16 @@ public class TargetPoolResolverTests : IDisposable
         SetupBossSubordinate(capo2, soldier1);
         SetupBossSubordinate(capo2, soldier2);
 
-        // Ask from soldier1's perspective — should climb to Boss
+        // Ask from soldier1's perspective should climb to Boss
         var family = _resolver.Resolve("root_crime_family", soldier1)!;
 
-        // Boss, Capo1, Capo2, Soldier1, Soldier2 — all Soldier+
-        Assert.Equal(5, family.Count);
-        Assert.Contains(boss, family);
-        Assert.Contains(capo1, family);
-        Assert.Contains(capo2, family);
-        Assert.Contains(soldier1, family);
-        Assert.Contains(soldier2, family);
+        // Boss, Capo1, Capo2, Soldier1, Soldier2 all Soldier+
+        family.Count.Should().Be(5);
+        family.Should().Contain(boss);
+        family.Should().Contain(capo1);
+        family.Should().Contain(capo2);
+        family.Should().Contain(soldier1);
+        family.Should().Contain(soldier2);
     }
 
     [Fact]
@@ -156,10 +157,10 @@ public class TargetPoolResolverTests : IDisposable
 
         var family = _resolver.Resolve("root_crime_family", soldier)!;
 
-        Assert.Contains(boss, family);
-        Assert.Contains(capo, family);
-        Assert.Contains(soldier, family);
-        Assert.DoesNotContain(associate, family);
+        family.Should().Contain(boss);
+        family.Should().Contain(capo);
+        family.Should().Contain(soldier);
+        family.Should().NotContain(associate);
     }
 
     [Fact]
@@ -173,9 +174,9 @@ public class TargetPoolResolverTests : IDisposable
 
         var family = _resolver.Resolve("root_crime_family", boss)!;
 
-        Assert.Single(family); // just the Boss
-        Assert.Contains(boss, family);
-        Assert.DoesNotContain(noRank, family);
+        family.Should().HaveCount(1); // just the Boss
+        family.Should().Contain(boss);
+        family.Should().NotContain(noRank);
     }
 
     [Fact]
@@ -187,9 +188,9 @@ public class TargetPoolResolverTests : IDisposable
 
         var family = _resolver.Resolve("root_crime_family", boss)!;
 
-        Assert.Equal(2, family.Count);
-        Assert.Contains(boss, family);
-        Assert.Contains(soldier, family);
+        family.Count.Should().Be(2);
+        family.Should().Contain(boss);
+        family.Should().Contain(soldier);
     }
 
     #endregion
@@ -205,8 +206,8 @@ public class TargetPoolResolverTests : IDisposable
 
         var result = _resolver.Resolve("root_subordinates", boss)!;
 
-        Assert.Single(result);
-        Assert.Contains(sub, result);
+        result.Should().HaveCount(1);
+        result.Should().Contain(sub);
     }
 
     [Fact]
@@ -218,8 +219,8 @@ public class TargetPoolResolverTests : IDisposable
 
         var result = _resolver.Resolve("root_family", vito)!;
 
-        Assert.Single(result);
-        Assert.Contains(michael, result);
+        result.Should().HaveCount(1);
+        result.Should().Contain(michael);
     }
 
     [Fact]
@@ -231,8 +232,8 @@ public class TargetPoolResolverTests : IDisposable
 
         var result = _resolver.Resolve("root_creditors", debtor)!;
 
-        Assert.Single(result);
-        Assert.Contains(creditor, result);
+        result.Should().HaveCount(1);
+        result.Should().Contain(creditor);
     }
 
     #endregion
@@ -246,7 +247,7 @@ public class TargetPoolResolverTests : IDisposable
 
         var result = _resolver.Resolve("same_territory", entity);
 
-        Assert.Null(result);
+        result.Should().BeNull();
     }
 
     #endregion

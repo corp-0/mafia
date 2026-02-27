@@ -8,6 +8,7 @@ public class AiWeightDto
 
 public class AiWeightModifierDto
 {
+    public ConditionDto? Condition { get; set; }
     public string? Trait { get; set; }
     public ConditionDto? StatThreshold { get; set; }
     public int Add { get; set; }

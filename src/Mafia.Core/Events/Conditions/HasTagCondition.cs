@@ -1,4 +1,5 @@
-﻿using Mafia.Core.Context;
+﻿using fennecs;
+using Mafia.Core.Context;
 using Mafia.Core.Events.Conditions.Interfaces;
 
 namespace Mafia.Core.Events.Conditions;
@@ -6,5 +7,6 @@ namespace Mafia.Core.Events.Conditions;
 public sealed class HasTagCondition<TTag>(string path) : IEventCondition
     where TTag : struct
 {
-    public bool Evaluate(EntityScope context) => context.HasTag<TTag>(path);
+    public bool Evaluate(EntityScope context) =>
+        context.TryNavigate(path, out Entity entity) && entity.Has<TTag>();
 }

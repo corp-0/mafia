@@ -11,28 +11,11 @@ public sealed class EventDefinitionRepository : IEventDefinitionRepository
 
     public void Register(EventDefinition definition)
     {
-        if (!_byId.TryAdd(definition.Id, definition))
-            throw new ArgumentException($"Duplicate event ID: '{definition.Id}'");
+        if (_byId.TryGetValue(definition.Id, out var existing))
+            RemoveFromIndexes(existing);
 
-        switch (definition)
-        {
-            case PulseEventDefinition pulse:
-                _pulseEvents.Add(pulse);
-                break;
-            case ActionEventDefinition action:
-                if (!_byActionId.TryGetValue(action.OnActionId, out var list))
-                {
-                    list = [];
-                    _byActionId[action.OnActionId] = list;
-                }
-                list.Add(action);
-                break;
-            case StoryBeatEventDefinition story:
-                _storyBeatEvents.Add(story);
-                break;
-            case ChainedEventDefinition:
-                break;
-        }
+        _byId[definition.Id] = definition;
+        AddToIndexes(definition);
     }
 
     public IReadOnlyList<T> GetAll<T>() where T : EventDefinition
@@ -52,4 +35,46 @@ public sealed class EventDefinitionRepository : IEventDefinitionRepository
 
     public EventDefinition? GetById(string id) =>
         _byId.GetValueOrDefault(id);
+
+    private void AddToIndexes(EventDefinition definition)
+    {
+        switch (definition)
+        {
+            case PulseEventDefinition pulse:
+                _pulseEvents.Add(pulse);
+                break;
+            case ActionEventDefinition action:
+                if (!_byActionId.TryGetValue(action.OnActionId, out var list))
+                {
+                    list = [];
+                    _byActionId[action.OnActionId] = list;
+                }
+                list.Add(action);
+                break;
+            case StoryBeatEventDefinition story:
+                _storyBeatEvents.Add(story);
+                break;
+        }
+    }
+
+    private void RemoveFromIndexes(EventDefinition definition)
+    {
+        switch (definition)
+        {
+            case PulseEventDefinition pulse:
+                _pulseEvents.Remove(pulse);
+                break;
+            case ActionEventDefinition action:
+                if (_byActionId.TryGetValue(action.OnActionId, out var list))
+                {
+                    list.Remove(action);
+                    if (list.Count == 0)
+                        _byActionId.Remove(action.OnActionId);
+                }
+                break;
+            case StoryBeatEventDefinition story:
+                _storyBeatEvents.Remove(story);
+                break;
+        }
+    }
 }

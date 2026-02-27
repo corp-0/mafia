@@ -20,7 +20,7 @@ public class TargetPoolResolver
 
     private static List<Entity> CollectCrew(Entity root)
     {
-        // Find the capo — either root IS the capo, or climb until we reach one
+        // Find the capo: either root IS the capo, or climb until we reach one
         var capo = FindCrewLeader(root);
         if (capo is null)
             return [];

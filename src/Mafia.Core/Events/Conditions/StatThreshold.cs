@@ -1,4 +1,5 @@
-﻿using Mafia.Core.Context;
+﻿using fennecs;
+using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.Interfaces;
 using Mafia.Core.Events.Conditions.Interfaces;
 
@@ -9,7 +10,8 @@ public sealed class StatThreshold<TStat>(string path, Comparison comparison, int
 {
     public bool Evaluate(EntityScope context)
     {
-        var stat = context.GetComponent<TStat>(path);
+        if (!context.TryNavigate(path, out Entity entity)) return false;
+        var stat = entity.GetComponent<TStat>();
 
         if (stat is null) return false;
 

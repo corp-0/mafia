@@ -1,4 +1,5 @@
-﻿using Mafia.Core.Context;
+﻿using fennecs;
+using Mafia.Core.Context;
 using Mafia.Core.Ecs.Relations.Interfaces;
 using Mafia.Core.Events.Effects.Interfaces;
 using Mafia.Core.Text;
@@ -10,12 +11,13 @@ public class AddRelationship<TRelation>(string fromPath, string toPath) : IEvent
 {
     public void Apply(EntityScope context)
     {
-        context.AddRelation<TRelation>(fromPath, toPath);
+        if (!context.TryNavigate(fromPath, toPath, out Entity from, out Entity to)) return;
+        from.TryAddRelation<TRelation>(to);
     }
 
     public Localizable Describe(EntityScope context)
     {
-        return new Localizable("effect.add_relationship", new Dictionary<string, string>
+        return new Localizable("effect.add_relationship", new Dictionary<string, object?>
         {
             ["relation"] = typeof(TRelation).Name.ToLower()
         });

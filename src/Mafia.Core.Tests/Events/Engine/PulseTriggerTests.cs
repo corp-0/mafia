@@ -1,3 +1,4 @@
+using FluentAssertions;
 using fennecs;
 using Mafia.Core.Content.Registries;
 using Mafia.Core.Context;
@@ -39,24 +40,24 @@ public class PulseTriggerTests : IDisposable
     private static PulseEventDefinition MakePulseDef(
         string id = "pulse_test",
         TargetSelection? targetSelection = null) => new()
-    {
-        Id = id,
-        Title = id,
-        Description = id,
-        Scope = ScopeType.Character,
-        MeanTimeToHappenDays = 30,
-        TargetSelection = targetSelection,
-        Options =
+        {
+            Id = id,
+            TitleKey = id,
+            DescriptionKey = id,
+            Scope = ScopeType.Character,
+            MeanTimeToHappenDays = 30,
+            TargetSelection = targetSelection,
+            Options =
         [
             new StandardOptionDefinition
             {
                 Id = "opt1",
-                DisplayText = "Option 1",
+                DisplayTextKey = "Option 1",
                 AiWeight = new AiWeight { BaseWeight = 10 },
                 Outcome = new EventOutcome { Effects = [] }
             }
         ]
-    };
+        };
 
     [Fact]
     public void OnlyAliveCharacters_ProduceCandidates()
@@ -64,7 +65,7 @@ public class PulseTriggerTests : IDisposable
         var alive1 = SpawnAlive();
         var alive2 = SpawnAlive();
         var disabled = SpawnDisabled();
-        // Entity without Character tag — should not appear
+        // Entity without Character tag should not appear
         _world.Spawn();
 
         var def = MakePulseDef();
@@ -76,11 +77,11 @@ public class PulseTriggerTests : IDisposable
         var candidates = trigger.GetCandidates(_date).ToList();
 
         // Only alive characters should produce candidates
-        Assert.Equal(2, candidates.Count);
+        candidates.Count.Should().Be(2);
         var roots = candidates.Select(c => c.Scope.ResolveAnchor("root")).ToHashSet();
-        Assert.Contains(alive1, roots);
-        Assert.Contains(alive2, roots);
-        Assert.DoesNotContain(disabled, roots);
+        roots.Should().Contain(alive1);
+        roots.Should().Contain(alive2);
+        roots.Should().NotContain(disabled);
     }
 
     [Fact]
@@ -97,8 +98,8 @@ public class PulseTriggerTests : IDisposable
 
         // Each tick should process roughly 20/5 = 4 entities
         var candidates = trigger.GetCandidates(_date).ToList();
-        Assert.True(candidates.Count <= 20, "Should not process all entities in one tick");
-        Assert.True(candidates.Count >= 1, "Should process at least some entities");
+        candidates.Count.Should().BeLessThanOrEqualTo(20, "Should not process all entities in one tick");
+        candidates.Count.Should().BeGreaterThanOrEqualTo(1, "Should process at least some entities");
 
         // Over 5 ticks, all entities should be processed
         var allRoots = new HashSet<Entity?>();
@@ -112,7 +113,7 @@ public class PulseTriggerTests : IDisposable
                 allRoots.Add(c.Scope.ResolveAnchor("root"));
         }
 
-        Assert.Equal(20, allRoots.Count);
+        allRoots.Count.Should().Be(20);
     }
 
     [Fact]
@@ -139,11 +140,11 @@ public class PulseTriggerTests : IDisposable
         var bossCandidates = candidates
             .Where(c => c.Scope.ResolveAnchor("root") == boss)
             .ToList();
-        Assert.Single(bossCandidates);
+        bossCandidates.Should().HaveCount(1);
 
         var target = bossCandidates[0].Scope.ResolveAnchor("target");
-        Assert.NotNull(target);
-        Assert.True(target == sub1 || target == sub2);
+        target.Should().NotBeNull();
+        (target == sub1 || target == sub2).Should().BeTrue();
     }
 
     [Fact]
@@ -169,11 +170,11 @@ public class PulseTriggerTests : IDisposable
         var vitoCandidates = candidates
             .Where(c => c.Scope.ResolveAnchor("root") == vito)
             .ToList();
-        Assert.Single(vitoCandidates);
+        vitoCandidates.Should().HaveCount(1);
 
         var target = vitoCandidates[0].Scope.ResolveAnchor("target");
-        Assert.NotNull(target);
-        Assert.True(target == michael || target == carmela);
+        target.Should().NotBeNull();
+        (target == michael || target == carmela).Should().BeTrue();
     }
 
     [Fact]
@@ -206,8 +207,8 @@ public class PulseTriggerTests : IDisposable
             .ToList();
 
         // Boss should still get a candidate since sub2 passes the filter
-        Assert.Single(bossCandidates);
-        Assert.Equal(sub2, bossCandidates[0].Scope.ResolveAnchor("target"));
+        bossCandidates.Should().HaveCount(1);
+        bossCandidates[0].Scope.ResolveAnchor("target").Should().Be(sub2);
     }
 
     [Fact]
@@ -225,7 +226,7 @@ public class PulseTriggerTests : IDisposable
         var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, bucketCount: 1);
         var candidates = trigger.GetCandidates(_date).ToList();
 
-        Assert.Empty(candidates);
+        candidates.Should().BeEmpty();
     }
 
     [Fact]
@@ -239,8 +240,8 @@ public class PulseTriggerTests : IDisposable
         var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, bucketCount: 1);
         var candidates = trigger.GetCandidates(_date).ToList();
 
-        Assert.Single(candidates);
-        Assert.Null(candidates[0].Scope.ResolveAnchor("target"));
+        candidates.Should().HaveCount(1);
+        candidates[0].Scope.ResolveAnchor("target").Should().BeNull();
     }
 }
 
@@ -251,6 +252,6 @@ internal sealed class NotArrestedCondition : IEventCondition
 {
     public bool Evaluate(EntityScope scope)
     {
-        return !scope.HasTag<Arrested>("root");
+        return !scope.TryNavigate("root", out var entity) || !entity.Has<Arrested>();
     }
 }

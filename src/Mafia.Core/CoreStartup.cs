@@ -1,4 +1,5 @@
-﻿using Mafia.Core.Content.Registries;
+﻿using Mafia.Core.Content;
+using Mafia.Core.Content.Registries;
 using Mafia.Core.Ecs.Relations;
 using Mafia.Core.Events.Engine;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,5 +19,6 @@ public static class CoreStartup
         services.AddSingleton<TargetPoolResolver>();
         services.AddSingleton<PulseTrigger>();
         services.AddSingleton<StoryBeatTrigger>();
+        services.AddSingleton<ContentLoader>();
     }
 }

@@ -1,4 +1,5 @@
 using fennecs;
+using FluentAssertions;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.Attributes;
 using Mafia.Core.Events.Definition;
@@ -30,7 +31,7 @@ public class AiEventResolverTests : IDisposable
     private static StandardOptionDefinition MakeStandardOption(string id, int weight = 10) => new()
     {
         Id = id,
-        DisplayText = id,
+        DisplayTextKey = id,
         AiWeight = new AiWeight { BaseWeight = weight },
         Outcome = new EventOutcome { Effects = [] }
     };
@@ -45,7 +46,7 @@ public class AiEventResolverTests : IDisposable
 
         var visible = def.GetVisibleOptions(scope);
 
-        Assert.Equal(2, visible.Count);
+        visible.Count.Should().Be(2);
     }
 
     [Fact]
@@ -57,7 +58,7 @@ public class AiEventResolverTests : IDisposable
             new StandardOptionDefinition
             {
                 Id = "hidden",
-                DisplayText = "hidden",
+                DisplayTextKey = "hidden",
                 AiWeight = new AiWeight { BaseWeight = 10 },
                 VisibilityConditions = new AlwaysFalseCondition(),
                 Outcome = new EventOutcome { Effects = [] }
@@ -65,15 +66,15 @@ public class AiEventResolverTests : IDisposable
 
         var visible = def.GetVisibleOptions(scope);
 
-        Assert.Single(visible);
-        Assert.Equal("visible", visible[0].Id);
+        visible.Should().HaveCount(1);
+        visible[0].Id.Should().Be("visible");
     }
 
     private static PulseEventDefinition MakeDefWithOptions(params EventOptionDefinition[] options) => new()
     {
         Id = "visibility_test",
-        Title = "Visibility",
-        Description = "Visibility",
+        TitleKey = "Visibility",
+        DescriptionKey = "Visibility",
         MeanTimeToHappenDays = 30,
         Options = options
     };
@@ -93,15 +94,15 @@ public class AiEventResolverTests : IDisposable
         var def = new PulseEventDefinition
         {
             Id = "test",
-            Title = "Test",
-            Description = "Test",
+            TitleKey = "Test",
+            DescriptionKey = "Test",
             MeanTimeToHappenDays = 30,
             Options =
             [
                 new StandardOptionDefinition
                 {
                     Id = "first",
-                    DisplayText = "First",
+                    DisplayTextKey = "First",
                     AiWeight = new AiWeight { BaseWeight = 10 },
                     Outcome = new EventOutcome { Effects = [tracker] }
                 },
@@ -111,7 +112,7 @@ public class AiEventResolverTests : IDisposable
 
         resolver.Resolve(def, scope);
 
-        Assert.Equal(1, tracker.ApplyCount);
+        tracker.ApplyCount.Should().Be(1);
     }
 
     [Fact]
@@ -124,15 +125,15 @@ public class AiEventResolverTests : IDisposable
         var def = new PulseEventDefinition
         {
             Id = "test",
-            Title = "Test",
-            Description = "Test",
+            TitleKey = "Test",
+            DescriptionKey = "Test",
             MeanTimeToHappenDays = 30,
             Options =
             [
                 new StandardOptionDefinition
                 {
                     Id = "zero",
-                    DisplayText = "Zero",
+                    DisplayTextKey = "Zero",
                     AiWeight = new AiWeight { BaseWeight = 0 },
                     Outcome = new EventOutcome { Effects = [tracker] }
                 }
@@ -141,7 +142,7 @@ public class AiEventResolverTests : IDisposable
 
         resolver.Resolve(def, scope);
 
-        Assert.Equal(0, tracker.ApplyCount);
+        tracker.ApplyCount.Should().Be(0);
     }
 
     #endregion
@@ -158,14 +159,14 @@ public class AiEventResolverTests : IDisposable
         var option = new StandardOptionDefinition
         {
             Id = "opt",
-            DisplayText = "opt",
+            DisplayTextKey = "opt",
             AiWeight = new AiWeight { BaseWeight = 10 },
             Outcome = new EventOutcome { Effects = [tracker] }
         };
 
         resolver.ApplyOptionOutcome(option, scope);
 
-        Assert.Equal(1, tracker.ApplyCount);
+        tracker.ApplyCount.Should().Be(1);
     }
 
     #endregion
@@ -185,7 +186,7 @@ public class AiEventResolverTests : IDisposable
         var option = new SkillCheckOptionDefinition
         {
             Id = "skill",
-            DisplayText = "skill",
+            DisplayTextKey = "skill",
             AiWeight = new AiWeight { BaseWeight = 10 },
             StatPath = "root",
             StatName = "muscle",
@@ -196,8 +197,8 @@ public class AiEventResolverTests : IDisposable
 
         resolver.ApplyOptionOutcome(option, scope);
 
-        Assert.Equal(1, successTracker.ApplyCount);
-        Assert.Equal(0, failTracker.ApplyCount);
+        successTracker.ApplyCount.Should().Be(1);
+        failTracker.ApplyCount.Should().Be(0);
     }
 
     [Fact]
@@ -213,7 +214,7 @@ public class AiEventResolverTests : IDisposable
         var option = new SkillCheckOptionDefinition
         {
             Id = "skill",
-            DisplayText = "skill",
+            DisplayTextKey = "skill",
             AiWeight = new AiWeight { BaseWeight = 10 },
             StatPath = "root",
             StatName = "muscle",
@@ -224,8 +225,8 @@ public class AiEventResolverTests : IDisposable
 
         resolver.ApplyOptionOutcome(option, scope);
 
-        Assert.Equal(0, successTracker.ApplyCount);
-        Assert.Equal(1, failTracker.ApplyCount);
+        successTracker.ApplyCount.Should().Be(0);
+        failTracker.ApplyCount.Should().Be(1);
     }
 
     #endregion
@@ -244,7 +245,7 @@ public class AiEventResolverTests : IDisposable
         var option = new RandomOptionDefinition
         {
             Id = "random",
-            DisplayText = "random",
+            DisplayTextKey = "random",
             AiWeight = new AiWeight { BaseWeight = 10 },
             Outcomes =
             [
@@ -255,8 +256,8 @@ public class AiEventResolverTests : IDisposable
 
         resolver.ApplyOptionOutcome(option, scope);
 
-        Assert.Equal(1, tracker1.ApplyCount);
-        Assert.Equal(0, tracker2.ApplyCount);
+        tracker1.ApplyCount.Should().Be(1);
+        tracker2.ApplyCount.Should().Be(0);
     }
 
     #endregion
@@ -268,11 +269,11 @@ public class AiEventResolverTests : IDisposable
     {
         var scope = CreateScopeWithRoot();
 
-        Assert.Equal(5, AiEventResolver.GetStatValue("muscle", "root", scope));
-        Assert.Equal(7, AiEventResolver.GetStatValue("nerve", "root", scope));
-        Assert.Equal(3, AiEventResolver.GetStatValue("brains", "root", scope));
-        Assert.Equal(8, AiEventResolver.GetStatValue("charm", "root", scope));
-        Assert.Equal(6, AiEventResolver.GetStatValue("instinct", "root", scope));
+        AiEventResolver.GetStatValue("muscle", "root", scope).Should().Be(5);
+        AiEventResolver.GetStatValue("nerve", "root", scope).Should().Be(7);
+        AiEventResolver.GetStatValue("brains", "root", scope).Should().Be(3);
+        AiEventResolver.GetStatValue("charm", "root", scope).Should().Be(8);
+        AiEventResolver.GetStatValue("instinct", "root", scope).Should().Be(6);
     }
 
     [Fact]
@@ -280,7 +281,7 @@ public class AiEventResolverTests : IDisposable
     {
         var scope = CreateScopeWithRoot();
 
-        Assert.Equal(0, AiEventResolver.GetStatValue("nonexistent", "root", scope));
+        AiEventResolver.GetStatValue("nonexistent", "root", scope).Should().Be(0);
     }
 
     [Fact]
@@ -288,8 +289,8 @@ public class AiEventResolverTests : IDisposable
     {
         var scope = CreateScopeWithRoot();
 
-        Assert.Equal(5, AiEventResolver.GetStatValue("MUSCLE", "root", scope));
-        Assert.Equal(5, AiEventResolver.GetStatValue("Muscle", "root", scope));
+        AiEventResolver.GetStatValue("MUSCLE", "root", scope).Should().Be(5);
+        AiEventResolver.GetStatValue("Muscle", "root", scope).Should().Be(5);
     }
 
     #endregion

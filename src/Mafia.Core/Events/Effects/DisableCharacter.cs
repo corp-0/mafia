@@ -1,19 +1,21 @@
+using fennecs;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.State;
 using Mafia.Core.Events.Effects.Interfaces;
 
 namespace Mafia.Core.Events.Effects;
 
-public class DisableCharacter<T>(string path) : IEventEffect where T : struct
+public class DisableCharacter<T>(string path) : IEventEffect where T : struct, IDisableReason
 {
     public void Apply(EntityScope context)
     {
-        if (!context.AddComponent<T>(path)) return;
+        if (!context.TryNavigate(path, out Entity entity)) return;
+        if (!entity.TryAddComponent<T>()) return;
 
-        var disabled = context.GetComponent<Disabled>(path);
+        var disabled = entity.GetComponent<Disabled>();
         if (disabled is { } current)
-            context.SetComponent(path, new Disabled(current.Count + 1));
+            entity.Ref<Disabled>() = new Disabled(current.Count + 1);
         else
-            context.AddComponent(path, new Disabled(1));
+            entity.TryAddComponent(new Disabled(1));
     }
 }

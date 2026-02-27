@@ -1,3 +1,4 @@
+using fennecs;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Relations.Interfaces;
 using Mafia.Core.Events.Effects.Interfaces;
@@ -10,12 +11,13 @@ public class RemoveRelationship<TRelation>(string fromPath, string toPath): IEve
 {
     public void Apply(EntityScope context)
     {
-        context.RemoveRelation<TRelation>(fromPath, toPath);
+        if (!context.TryNavigate(fromPath, toPath, out Entity from, out Entity to)) return;
+        from.TryRemoveRelation<TRelation>(to);
     }
 
     public Localizable Describe(EntityScope context)
     {
-        return new Localizable("effect.remove_relationship", new Dictionary<string, string>
+        return new Localizable("effect.remove_relationship", new Dictionary<string, object?>
         {
             ["relation"] = typeof(TRelation).Name.ToLower()
         });

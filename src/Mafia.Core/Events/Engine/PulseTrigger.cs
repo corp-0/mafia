@@ -72,7 +72,7 @@ public class PulseTrigger(
         if (selection.Filter is { } filter)
         {
             var filtered = new List<Entity>();
-            foreach (var candidate in pool)
+            foreach (Entity candidate in pool)
             {
                 var tempScope = new EntityScope(world)
                 {

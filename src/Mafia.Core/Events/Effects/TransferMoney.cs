@@ -1,4 +1,5 @@
-﻿using Mafia.Core.Context;
+﻿using fennecs;
+using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.State;
 using Mafia.Core.Ecs.Relations;
 using Mafia.Core.Events.Effects.Interfaces;
@@ -10,9 +11,7 @@ public class TransferMoney(string fromPath, string toPath, int amount): IEventEf
 {
     public void Apply(EntityScope context)
     {
-        var from = context.Navigate(fromPath);
-        var to = context.Navigate(toPath);
-        if (from is not { } a || to is not { } b) return;
+        if (!context.TryNavigate(fromPath, toPath, out Entity a, out Entity b)) return;
         if (!a.Has<Wealth>() || !b.Has<Wealth>()) return;
 
         var available = a.Ref<Wealth>().Amount;
@@ -41,7 +40,7 @@ public class TransferMoney(string fromPath, string toPath, int amount): IEventEf
         var key = fromPath.StartsWith("root")
             ? "effect.transfer_money.lose"
             : "effect.transfer_money.gain";
-        return new Localizable(key, new Dictionary<string, string>
+        return new Localizable(key, new Dictionary<string, object?>
         {
             ["amount"] = amount.ToString()
         });

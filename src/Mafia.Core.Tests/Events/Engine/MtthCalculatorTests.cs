@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Mafia.Core.Context;
 using Mafia.Core.Events.Definition;
 using Mafia.Core.Events.Engine;
@@ -22,7 +23,7 @@ public class MtthCalculatorTests : IDisposable
         var calc = new MtthCalculator();
         var result = calc.CalculateEffective(30.0, [], CreateScope());
 
-        Assert.Equal(30.0, result);
+        result.Should().Be(30.0);
     }
 
     [Fact]
@@ -40,7 +41,7 @@ public class MtthCalculatorTests : IDisposable
 
         var result = calc.CalculateEffective(30.0, modifiers, CreateScope());
 
-        Assert.Equal(15.0, result);
+        result.Should().Be(15.0);
     }
 
     [Fact]
@@ -58,7 +59,7 @@ public class MtthCalculatorTests : IDisposable
 
         var result = calc.CalculateEffective(30.0, modifiers, CreateScope());
 
-        Assert.Equal(30.0, result);
+        result.Should().Be(30.0);
     }
 
     [Fact]
@@ -73,7 +74,7 @@ public class MtthCalculatorTests : IDisposable
 
         var result = calc.CalculateEffective(30.0, modifiers, CreateScope());
 
-        Assert.Equal(30.0, result); // 30 * 0.5 * 2.0 = 30
+        result.Should().Be(30.0); // 30 * 0.5 * 2.0 = 30
     }
 
     [Fact]
@@ -87,7 +88,7 @@ public class MtthCalculatorTests : IDisposable
 
         var result = calc.CalculateEffective(1.0, modifiers, CreateScope());
 
-        Assert.Equal(1.0, result);
+        result.Should().Be(1.0);
     }
 
     #endregion
@@ -100,7 +101,7 @@ public class MtthCalculatorTests : IDisposable
         // Random that always returns 0.0, any probability > 0 should pass
         var calc = new MtthCalculator(new FixedRandom(0.0));
 
-        Assert.True(calc.Roll(30.0, 1.0));
+        calc.Roll(30.0, 1.0).Should().BeTrue();
     }
 
     [Fact]
@@ -109,7 +110,7 @@ public class MtthCalculatorTests : IDisposable
         // Random that returns 0.999... only 100% probability would pass
         var calc = new MtthCalculator(new FixedRandom(0.999));
 
-        Assert.False(calc.Roll(30.0, 1.0));
+        calc.Roll(30.0, 1.0).Should().BeFalse();
     }
 
     [Fact]
@@ -118,11 +119,11 @@ public class MtthCalculatorTests : IDisposable
         // P = 1 - e^(-1/30) ≈ 0.03278
         // Random returns 0.03 → should pass (0.03 < 0.03278)
         var calc = new MtthCalculator(new FixedRandom(0.03));
-        Assert.True(calc.Roll(30.0, 1.0));
+        calc.Roll(30.0, 1.0).Should().BeTrue();
 
         // Random returns 0.04 → should fail (0.04 > 0.03278)
         calc = new MtthCalculator(new FixedRandom(0.04));
-        Assert.False(calc.Roll(30.0, 1.0));
+        calc.Roll(30.0, 1.0).Should().BeFalse();
     }
 
     #endregion

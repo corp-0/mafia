@@ -1,4 +1,5 @@
-﻿using Mafia.Core.Context;
+﻿using fennecs;
+using Mafia.Core.Context;
 using Mafia.Core.Ecs.Relations.Interfaces;
 using Mafia.Core.Events.Conditions.Interfaces;
 
@@ -9,6 +10,7 @@ public class HasRelationship<TRelation>(string fromPath, string toPath) : IEvent
 {
     public bool Evaluate(EntityScope context)
     {
-        return context.HasRelation<TRelation>(fromPath, toPath);
+        return context.TryNavigate(fromPath, toPath, out Entity from, out Entity to) 
+               && from.Has<TRelation>(to);
     }
 }

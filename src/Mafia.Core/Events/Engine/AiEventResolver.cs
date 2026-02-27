@@ -69,16 +69,19 @@ public class AiEventResolver
         return random.Outcomes[^1];
     }
 
-    public static int GetStatValue(string statName, string statPath, EntityScope scope) =>
-        statName.ToLowerInvariant() switch
+    public static int GetStatValue(string statName, string statPath, EntityScope scope)
+    {
+        if (!scope.TryNavigate(statPath, out var entity)) return 0;
+        return statName.ToLowerInvariant() switch
         {
-            "muscle" => scope.GetComponent<Muscle>(statPath)?.Amount ?? 0,
-            "nerve" => scope.GetComponent<Nerve>(statPath)?.Amount ?? 0,
-            "brains" => scope.GetComponent<Brains>(statPath)?.Amount ?? 0,
-            "charm" => scope.GetComponent<Charm>(statPath)?.Amount ?? 0,
-            "instinct" => scope.GetComponent<Instinct>(statPath)?.Amount ?? 0,
+            "muscle" => entity.GetComponent<Muscle>()?.Amount ?? 0,
+            "nerve" => entity.GetComponent<Nerve>()?.Amount ?? 0,
+            "brains" => entity.GetComponent<Brains>()?.Amount ?? 0,
+            "charm" => entity.GetComponent<Charm>()?.Amount ?? 0,
+            "instinct" => entity.GetComponent<Instinct>()?.Amount ?? 0,
             _ => 0
         };
+    }
 
     private EventOptionDefinition? WeightedRandomSelect(List<EventOptionDefinition> options, EntityScope scope)
     {

@@ -1,6 +1,4 @@
 ﻿using fennecs;
-using Mafia.Core.Ecs.Components.Rank;
-using Mafia.Core.Ecs.Relations.Interfaces;
 using Mafia.Core.Events.Engine;
 using Mafia.Core.Time;
 
@@ -38,6 +36,24 @@ public sealed partial class EntityScope(World thisWorld)
         return _anchors.TryGetValue(name, out var entity) ? entity : null;
     }
 
+    public bool TryNavigate(string dottedPath, out Entity entity)
+    {
+        var result = Navigate(dottedPath);
+        if (result is { } e)
+        {
+            entity = e;
+            return true;
+        }
+        entity = default;
+        return false;
+    }
+
+    public bool TryNavigate(string fromPath, string toPath, out Entity from, out Entity to)
+    {
+        to = default;
+        return TryNavigate(fromPath, out from) && TryNavigate(toPath, out to);
+    }
+
     public Entity? Navigate(ReadOnlySpan<char> dottedPath)
     {
         if (dottedPath.IsEmpty) return null;
@@ -68,82 +84,6 @@ public sealed partial class EntityScope(World thisWorld)
         }
 
         return current;
-    }
-
-    public T? GetComponent<T>(string dottedPath) where T : struct
-    {
-        Entity? root = Navigate(dottedPath);
-        if (root is not { } entity) return null;
-        if (!entity.Has<T>()) return null;
-        return entity.Ref<T>();
-    }
-
-    public bool HasTag<T>(string dottedPath) where T : struct
-    {
-        Entity? root = Navigate(dottedPath);
-        if (root is not { } entity) return false;
-        return entity.Has<T>();
-    }
-
-    public bool SetComponent<T>(string dottedPath, T value) where T : struct
-    {
-        Entity? root = Navigate(dottedPath);
-        if (root is not { } entity) return false;
-        if (!entity.Has<T>()) return false;
-        entity.Ref<T>() = value;
-        return true;
-    }
-
-    public bool AddComponent<T>(string dottedPath, T data = default) where T : struct
-    {
-        Entity? root = Navigate(dottedPath);
-        if (root is not { } entity) return false;
-        if (entity.Has<T>()) return false;
-        entity.Add(data);
-        return true;
-    }
-
-    public bool RemoveComponent<T>(string dottedPath) where T : struct
-    {
-        Entity? root = Navigate(dottedPath);
-        if (root is not { } entity) return false;
-        if (!entity.Has<T>()) return false;
-        entity.Remove<T>();
-        return true;
-    }
-
-    public bool HasRelation<T>(string fromPath, string toPath) where T : struct, IRelation
-    {
-        var from = Navigate(fromPath);
-        var to = Navigate(toPath);
-        if (from is not { } entityA || to is not { } entityB) return false;
-        return entityA.Has<T>(entityB);
-    }
-
-    public bool AddRelation<T>(string fromPath, string toPath) where T : struct, IRelation
-    {
-        var from = Navigate(fromPath);
-        var to = Navigate(toPath);
-        if (from is not { } entityA || to is not { } entityB) return false;
-        if (entityA.Has<T>(entityB)) return false;
-        entityA.Add(new T { Target = entityB }, entityB);
-        return true;
-    }
-
-    public bool RemoveRelation<T>(string fromPath, string toPath) where T : struct, IRelation
-    {
-        var from = Navigate(fromPath);
-        var to = Navigate(toPath);
-        if (from is not { } entityA || to is not { } entityB) return false;
-        if (!entityA.Has<T>(entityB)) return false;
-        entityA.Remove<T>(entityB);
-        return true;
-    }
-
-    public RankId? GetRank(string dottedPath)
-    {
-        var rank = GetComponent<Rank>(dottedPath);
-        return rank?.Id;
     }
 
     public void TriggerChainedEvent(string eventId, EntityScope? newScope = null)

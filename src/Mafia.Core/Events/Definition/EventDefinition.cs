@@ -27,8 +27,8 @@ public enum EventPresentation
 public abstract class EventDefinition
 {
     public required string Id { get; init; }
-    public required string Title { get; init; }
-    public required string Description { get; init; }
+    public required string TitleKey { get; init; }
+    public required string DescriptionKey { get; init; }
     public ScopeType Scope { get; init; }
     
     /// <summary>

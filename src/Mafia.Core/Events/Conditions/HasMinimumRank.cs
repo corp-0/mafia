@@ -1,3 +1,4 @@
+using fennecs;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.Rank;
 using Mafia.Core.Events.Conditions.Interfaces;
@@ -8,7 +9,8 @@ public sealed class HasMinimumRank(string path, RankId minimum) : IEventConditio
 {
     public bool Evaluate(EntityScope context)
     {
-        var rank = context.GetRank(path);
-        return rank is not null && rank.Value >= minimum;
+        if (!context.TryNavigate(path, out Entity entity)) return false;
+        var rank = entity.GetComponent<Rank>();
+        return rank is not null && rank.Value.Id >= minimum;
     }
 }

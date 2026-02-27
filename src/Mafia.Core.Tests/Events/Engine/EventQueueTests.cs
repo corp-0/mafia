@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Mafia.Core.Context;
 using Mafia.Core.Events.Definition;
 using Mafia.Core.Events.Engine;
@@ -19,8 +20,8 @@ public class EventQueueTests : IDisposable
     private static PulseEventDefinition MakeDef(string id, int priority = 0) => new()
     {
         Id = id,
-        Title = id,
-        Description = id,
+        TitleKey = id,
+        DescriptionKey = id,
         MeanTimeToHappenDays = 30,
         Options = [],
         Priority = priority
@@ -42,15 +43,15 @@ public class EventQueueTests : IDisposable
         var second = _queue.Dequeue();
         var third = _queue.Dequeue();
 
-        Assert.Equal("high", first!.Definition.Id);
-        Assert.Equal("medium", second!.Definition.Id);
-        Assert.Equal("low", third!.Definition.Id);
+        first!.Definition.Id.Should().Be("high");
+        second!.Definition.Id.Should().Be("medium");
+        third!.Definition.Id.Should().Be("low");
     }
 
     [Fact]
     public void Dequeue_EmptyQueue_ReturnsNull()
     {
-        Assert.Null(_queue.Dequeue());
+        _queue.Dequeue().Should().BeNull();
     }
 
     #endregion
@@ -63,7 +64,7 @@ public class EventQueueTests : IDisposable
         _queue.Enqueue(MakeQueued("a"));
         _queue.ResetTickCounter();
 
-        Assert.True(_queue.CanPresentMore);
+        _queue.CanPresentMore.Should().BeTrue();
     }
 
     [Fact]
@@ -78,7 +79,7 @@ public class EventQueueTests : IDisposable
         _queue.Dequeue();
         _queue.Dequeue();
 
-        Assert.False(_queue.CanPresentMore);
+        _queue.CanPresentMore.Should().BeFalse();
     }
 
     [Fact]
@@ -90,10 +91,10 @@ public class EventQueueTests : IDisposable
         _queue.ResetTickCounter();
 
         _queue.Dequeue();
-        Assert.False(_queue.CanPresentMore);
+        _queue.CanPresentMore.Should().BeFalse();
 
         _queue.ResetTickCounter();
-        Assert.True(_queue.CanPresentMore);
+        _queue.CanPresentMore.Should().BeTrue();
     }
 
     #endregion
@@ -103,20 +104,20 @@ public class EventQueueTests : IDisposable
     [Fact]
     public void PendingCount_ReflectsQueueSize()
     {
-        Assert.Equal(0, _queue.PendingCount);
+        _queue.PendingCount.Should().Be(0);
 
         _queue.Enqueue(MakeQueued("a"));
         _queue.Enqueue(MakeQueued("b"));
-        Assert.Equal(2, _queue.PendingCount);
+        _queue.PendingCount.Should().Be(2);
 
         _queue.Dequeue();
-        Assert.Equal(1, _queue.PendingCount);
+        _queue.PendingCount.Should().Be(1);
     }
 
     [Fact]
     public void HasPendingEvents_EmptyQueue_ReturnsFalse()
     {
-        Assert.False(_queue.HasPendingEvents);
+        _queue.HasPendingEvents.Should().BeFalse();
     }
 
     [Fact]
@@ -124,7 +125,7 @@ public class EventQueueTests : IDisposable
     {
         _queue.Enqueue(MakeQueued("a"));
 
-        Assert.True(_queue.HasPendingEvents);
+        _queue.HasPendingEvents.Should().BeTrue();
     }
 
     #endregion

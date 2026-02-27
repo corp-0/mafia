@@ -1,3 +1,4 @@
+using FluentAssertions;
 using fennecs;
 using Mafia.Core.Content.Registries;
 using Mafia.Core.Ecs.Components.State;
@@ -37,8 +38,8 @@ public class StoryBeatTriggerTests : IDisposable
         bool oneTime = false) => new()
     {
         Id = id,
-        Title = id,
-        Description = id,
+        TitleKey = id,
+        DescriptionKey = id,
         Scope = ScopeType.Character,
         StoryDate = storyDate ?? new GameDate(1950, 6, 1),
         IsOneTimeOnly = oneTime,
@@ -47,7 +48,7 @@ public class StoryBeatTriggerTests : IDisposable
             new StandardOptionDefinition
             {
                 Id = "opt1",
-                DisplayText = "Option 1",
+                DisplayTextKey = "Option 1",
                 AiWeight = new AiWeight { BaseWeight = 10 },
                 Outcome = new EventOutcome { Effects = [] }
             }
@@ -65,7 +66,7 @@ public class StoryBeatTriggerTests : IDisposable
         var trigger = new StoryBeatTrigger(_repo, _world, _history);
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
-        Assert.Empty(candidates);
+        candidates.Should().BeEmpty();
     }
 
     [Fact]
@@ -79,8 +80,8 @@ public class StoryBeatTriggerTests : IDisposable
         var trigger = new StoryBeatTrigger(_repo, _world, _history);
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
-        Assert.Single(candidates);
-        Assert.Equal(alive, candidates[0].Scope.ResolveAnchor("root"));
+        candidates.Should().HaveCount(1);
+        candidates[0].Scope.ResolveAnchor("root").Should().Be(alive);
     }
 
     [Fact]
@@ -95,7 +96,7 @@ public class StoryBeatTriggerTests : IDisposable
         var trigger = new StoryBeatTrigger(_repo, _world, _history);
         var candidates = trigger.GetCandidates(date).ToList();
 
-        Assert.Single(candidates);
+        candidates.Should().HaveCount(1);
     }
 
     [Fact]
@@ -111,8 +112,8 @@ public class StoryBeatTriggerTests : IDisposable
         var trigger = new StoryBeatTrigger(_repo, _world, _history);
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
-        Assert.Single(candidates);
-        Assert.Equal(alive, candidates[0].Scope.ResolveAnchor("root"));
+        candidates.Should().HaveCount(1);
+        candidates[0].Scope.ResolveAnchor("root").Should().Be(alive);
     }
 
     [Fact]
@@ -131,8 +132,8 @@ public class StoryBeatTriggerTests : IDisposable
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
         // Only 'other' should produce a candidate
-        Assert.Single(candidates);
-        Assert.Equal(other, candidates[0].Scope.ResolveAnchor("root"));
+        candidates.Should().HaveCount(1);
+        candidates[0].Scope.ResolveAnchor("root").Should().Be(other);
     }
 
     [Fact]
@@ -148,10 +149,10 @@ public class StoryBeatTriggerTests : IDisposable
         var trigger = new StoryBeatTrigger(_repo, _world, _history);
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
-        Assert.Equal(3, candidates.Count);
+        candidates.Count.Should().Be(3);
         var roots = candidates.Select(x => x.Scope.ResolveAnchor("root")).ToHashSet();
-        Assert.Contains(a, roots);
-        Assert.Contains(b, roots);
-        Assert.Contains(c, roots);
+        roots.Should().Contain(a);
+        roots.Should().Contain(b);
+        roots.Should().Contain(c);
     }
 }

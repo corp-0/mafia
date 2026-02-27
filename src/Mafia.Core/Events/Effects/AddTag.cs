@@ -1,4 +1,5 @@
-﻿using Mafia.Core.Context;
+﻿using fennecs;
+using Mafia.Core.Context;
 using Mafia.Core.Events.Effects.Interfaces;
 using Mafia.Core.Text;
 
@@ -10,11 +11,12 @@ public class AddTag<TTag>(string path) : IEventEffect, IDescribableEffect
 
     public void Apply(EntityScope context)
     {
-        context.AddComponent<TTag>(path);
+        if (!context.TryNavigate(path, out Entity entity)) return;
+        entity.TryAddComponent<TTag>();
     }
 
     public Localizable Describe(EntityScope context) =>
-        new("effect.add_trait", new Dictionary<string, string>
+        new("effect.add_trait", new Dictionary<string, object?>
         {
             ["trait"] = typeof(TTag).Name.ToLower()
         });

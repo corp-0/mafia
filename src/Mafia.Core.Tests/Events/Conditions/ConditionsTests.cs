@@ -1,4 +1,5 @@
 using fennecs;
+using FluentAssertions;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.Attributes;
 using Mafia.Core.Ecs.Components.Rank;
@@ -29,7 +30,7 @@ public class ConditionsTests : IDisposable
         entity.Add<Arrested>();
         scope.WithAnchor("root", entity);
 
-        Assert.True(new HasTagCondition<Arrested>("root").Evaluate(scope));
+        new HasTagCondition<Arrested>("root").Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -39,7 +40,7 @@ public class ConditionsTests : IDisposable
         var entity = SpawnEntity();
         scope.WithAnchor("root", entity);
 
-        Assert.False(new HasTagCondition<Arrested>("root").Evaluate(scope));
+        new HasTagCondition<Arrested>("root").Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -47,7 +48,7 @@ public class ConditionsTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.False(new HasTagCondition<Arrested>("nobody").Evaluate(scope));
+        new HasTagCondition<Arrested>("nobody").Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -60,7 +61,7 @@ public class ConditionsTests : IDisposable
         vito.Add(new FatherOf(michael), michael);
         scope.WithAnchor("vito", vito);
 
-        Assert.True(new HasTagCondition<Killed>("vito.FatherOf").Evaluate(scope));
+        new HasTagCondition<Killed>("vito.FatherOf").Evaluate(scope).Should().BeTrue();
     }
 
     #endregion
@@ -76,7 +77,7 @@ public class ConditionsTests : IDisposable
         vito.Add(new FatherOf(michael), michael);
         scope.WithAnchor("vito", vito).WithAnchor("michael", michael);
 
-        Assert.True(new HasRelationship<FatherOf>("vito", "michael").Evaluate(scope));
+        new HasRelationship<FatherOf>("vito", "michael").Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -87,7 +88,7 @@ public class ConditionsTests : IDisposable
         var b = SpawnEntity();
         scope.WithAnchor("a", a).WithAnchor("b", b);
 
-        Assert.False(new HasRelationship<FatherOf>("a", "b").Evaluate(scope));
+        new HasRelationship<FatherOf>("a", "b").Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -99,7 +100,7 @@ public class ConditionsTests : IDisposable
         vito.Add(new FatherOf(michael), michael);
         scope.WithAnchor("vito", vito).WithAnchor("michael", michael);
 
-        Assert.False(new HasRelationship<FatherOf>("michael", "vito").Evaluate(scope));
+        new HasRelationship<FatherOf>("michael", "vito").Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -111,7 +112,7 @@ public class ConditionsTests : IDisposable
         vito.Add(new FatherOf(michael), michael);
         scope.WithAnchor("vito", vito).WithAnchor("michael", michael);
 
-        Assert.False(new HasRelationship<BossOf>("vito", "michael").Evaluate(scope));
+        new HasRelationship<BossOf>("vito", "michael").Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -119,7 +120,7 @@ public class ConditionsTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.False(new HasRelationship<FatherOf>("nobody", "ghost").Evaluate(scope));
+        new HasRelationship<FatherOf>("nobody", "ghost").Evaluate(scope).Should().BeFalse();
     }
 
     #endregion
@@ -134,7 +135,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Rank(RankId.Caporegime));
         scope.WithAnchor("root", entity);
 
-        Assert.True(new HasMinimumRank("root", RankId.Caporegime).Evaluate(scope));
+        new HasMinimumRank("root", RankId.Caporegime).Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -145,7 +146,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Rank(RankId.Boss));
         scope.WithAnchor("root", entity);
 
-        Assert.True(new HasMinimumRank("root", RankId.Soldier).Evaluate(scope));
+        new HasMinimumRank("root", RankId.Soldier).Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -156,7 +157,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Rank(RankId.Soldier));
         scope.WithAnchor("root", entity);
 
-        Assert.False(new HasMinimumRank("root", RankId.Caporegime).Evaluate(scope));
+        new HasMinimumRank("root", RankId.Caporegime).Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -166,7 +167,7 @@ public class ConditionsTests : IDisposable
         var entity = SpawnEntity();
         scope.WithAnchor("root", entity);
 
-        Assert.False(new HasMinimumRank("root", RankId.Associate).Evaluate(scope));
+        new HasMinimumRank("root", RankId.Associate).Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -174,7 +175,7 @@ public class ConditionsTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.False(new HasMinimumRank("nobody", RankId.Associate).Evaluate(scope));
+        new HasMinimumRank("nobody", RankId.Associate).Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -185,7 +186,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Rank(RankId.Associate));
         scope.WithAnchor("root", entity);
 
-        Assert.True(new HasMinimumRank("root", RankId.Associate).Evaluate(scope));
+        new HasMinimumRank("root", RankId.Associate).Evaluate(scope).Should().BeTrue();
     }
 
     #endregion
@@ -200,7 +201,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Muscle(7));
         scope.WithAnchor("root", entity);
 
-        Assert.True(new StatThreshold<Muscle>("root", Comparison.GreaterThan, 5).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.GreaterThan, 5).Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -211,7 +212,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Muscle(5));
         scope.WithAnchor("root", entity);
 
-        Assert.False(new StatThreshold<Muscle>("root", Comparison.GreaterThan, 5).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.GreaterThan, 5).Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -222,7 +223,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Muscle(3));
         scope.WithAnchor("root", entity);
 
-        Assert.False(new StatThreshold<Muscle>("root", Comparison.GreaterThan, 5).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.GreaterThan, 5).Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -233,7 +234,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Muscle(3));
         scope.WithAnchor("root", entity);
 
-        Assert.True(new StatThreshold<Muscle>("root", Comparison.LessThan, 5).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.LessThan, 5).Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -244,7 +245,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Muscle(5));
         scope.WithAnchor("root", entity);
 
-        Assert.False(new StatThreshold<Muscle>("root", Comparison.LessThan, 5).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.LessThan, 5).Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -255,7 +256,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Muscle(5));
         scope.WithAnchor("root", entity);
 
-        Assert.True(new StatThreshold<Muscle>("root", Comparison.GreaterThanOrEqualTo, 5).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.GreaterThanOrEqualTo, 5).Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -266,7 +267,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Muscle(5));
         scope.WithAnchor("root", entity);
 
-        Assert.True(new StatThreshold<Muscle>("root", Comparison.LessThanOrEqualTo, 5).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.LessThanOrEqualTo, 5).Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -276,7 +277,7 @@ public class ConditionsTests : IDisposable
         var entity = SpawnEntity();
         scope.WithAnchor("root", entity);
 
-        Assert.False(new StatThreshold<Muscle>("root", Comparison.GreaterThan, 0).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.GreaterThan, 0).Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -284,7 +285,7 @@ public class ConditionsTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.False(new StatThreshold<Muscle>("nobody", Comparison.GreaterThan, 0).Evaluate(scope));
+        new StatThreshold<Muscle>("nobody", Comparison.GreaterThan, 0).Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -295,7 +296,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Muscle(5));
         scope.WithAnchor("root", entity);
 
-        Assert.True(new StatThreshold<Muscle>("root", Comparison.Equal, 5).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.Equal, 5).Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -306,7 +307,7 @@ public class ConditionsTests : IDisposable
         entity.Add(new Muscle(5));
         scope.WithAnchor("root", entity);
 
-        Assert.False(new StatThreshold<Muscle>("root", Comparison.Equal, 3).Evaluate(scope));
+        new StatThreshold<Muscle>("root", Comparison.Equal, 3).Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -318,8 +319,8 @@ public class ConditionsTests : IDisposable
         entity.Add(new Charm(3));
         scope.WithAnchor("root", entity);
 
-        Assert.True(new StatThreshold<Nerve>("root", Comparison.GreaterThan, 5).Evaluate(scope));
-        Assert.False(new StatThreshold<Charm>("root", Comparison.GreaterThan, 5).Evaluate(scope));
+        new StatThreshold<Nerve>("root", Comparison.GreaterThan, 5).Evaluate(scope).Should().BeTrue();
+        new StatThreshold<Charm>("root", Comparison.GreaterThan, 5).Evaluate(scope).Should().BeFalse();
     }
 
     #endregion
@@ -336,7 +337,7 @@ public class ConditionsTests : IDisposable
         var b = SpawnEntity();
         scope.WithAnchor("a", a).WithAnchor("b", b);
 
-        Assert.False(new SameLocation("a", "b").Evaluate(scope));
+        new SameLocation("a", "b").Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -344,12 +345,12 @@ public class ConditionsTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.False(new SameLocation("nobody", "ghost").Evaluate(scope));
+        new SameLocation("nobody", "ghost").Evaluate(scope).Should().BeFalse();
     }
 
     #endregion
 
-    #region Composite Conditions – AllOf
+    #region Composite Conditions  AllOf
 
     [Fact]
     public void AllOf_AllTrue_ReturnsTrue()
@@ -365,7 +366,7 @@ public class ConditionsTests : IDisposable
             new StatThreshold<Muscle>("root", Comparison.GreaterThan, 5)
         );
 
-        Assert.True(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -382,7 +383,7 @@ public class ConditionsTests : IDisposable
             new StatThreshold<Muscle>("root", Comparison.GreaterThan, 5)
         );
 
-        Assert.False(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -390,7 +391,7 @@ public class ConditionsTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.True(new AllOf().Evaluate(scope));
+        new AllOf().Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -401,13 +402,13 @@ public class ConditionsTests : IDisposable
         entity.Add<Arrested>();
         scope.WithAnchor("root", entity);
 
-        Assert.True(new AllOf(new HasTagCondition<Arrested>("root")).Evaluate(scope));
-        Assert.False(new AllOf(new HasTagCondition<Killed>("root")).Evaluate(scope));
+        new AllOf(new HasTagCondition<Arrested>("root")).Evaluate(scope).Should().BeTrue();
+        new AllOf(new HasTagCondition<Killed>("root")).Evaluate(scope).Should().BeFalse();
     }
 
     #endregion
 
-    #region Composite Conditions – AnyOf
+    #region Composite Conditions  AnyOf
 
     [Fact]
     public void AnyOf_OneTrue_ReturnsTrue()
@@ -422,7 +423,7 @@ public class ConditionsTests : IDisposable
             new HasTagCondition<Killed>("root")
         );
 
-        Assert.True(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -437,7 +438,7 @@ public class ConditionsTests : IDisposable
             new HasTagCondition<Killed>("root")
         );
 
-        Assert.False(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -445,12 +446,12 @@ public class ConditionsTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.False(new AnyOf().Evaluate(scope));
+        new AnyOf().Evaluate(scope).Should().BeFalse();
     }
 
     #endregion
 
-    #region Composite Conditions – NoneOf
+    #region Composite Conditions  NoneOf
 
     [Fact]
     public void NoneOf_NoneTrue_ReturnsTrue()
@@ -464,7 +465,7 @@ public class ConditionsTests : IDisposable
             new HasTagCondition<Killed>("root")
         );
 
-        Assert.True(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -480,7 +481,7 @@ public class ConditionsTests : IDisposable
             new HasTagCondition<Killed>("root")
         );
 
-        Assert.False(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -488,12 +489,12 @@ public class ConditionsTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.True(new NoneOf().Evaluate(scope));
+        new NoneOf().Evaluate(scope).Should().BeTrue();
     }
 
     #endregion
 
-    #region Composite Conditions – Nesting
+    #region Composite Conditions  Nesting
 
     [Fact]
     public void Composites_CanBeNested()
@@ -515,7 +516,7 @@ public class ConditionsTests : IDisposable
         );
 
         // First branch is true (arrested + muscle 7 > 5), second is false (Caporegime < Boss)
-        Assert.True(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -534,7 +535,7 @@ public class ConditionsTests : IDisposable
             )
         );
 
-        Assert.True(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeTrue();
     }
 
     #endregion

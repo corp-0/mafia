@@ -1,4 +1,5 @@
 using fennecs;
+using FluentAssertions;
 using Mafia.Core.Content.Registries;
 using Mafia.Core.Context;
 using Mafia.Core.Events.Conditions;
@@ -46,15 +47,15 @@ public class EventOrchestratorTests : IDisposable
         int priority = 0) => new()
         {
             Id = id,
-            Title = id,
-            Description = id,
+            TitleKey = id,
+            DescriptionKey = id,
             MeanTimeToHappenDays = 30,
             Options =
         [
             new StandardOptionDefinition
             {
                 Id = "opt1",
-                DisplayText = "Option 1",
+                DisplayTextKey = "Option 1",
                 AiWeight = new AiWeight { BaseWeight = 10 },
                 Outcome = new EventOutcome { Effects = [] }
             }
@@ -67,15 +68,15 @@ public class EventOrchestratorTests : IDisposable
     private static ActionEventDefinition MakeActionDef(string id = "action_test") => new()
     {
         Id = id,
-        Title = id,
-        Description = id,
+        TitleKey = id,
+        DescriptionKey = id,
         OnActionId = "do_thing",
         Options =
         [
             new StandardOptionDefinition
             {
                 Id = "opt1",
-                DisplayText = "Option 1",
+                DisplayTextKey = "Option 1",
                 AiWeight = new AiWeight { BaseWeight = 10 },
                 Outcome = new EventOutcome { Effects = [] }
             }
@@ -99,13 +100,13 @@ public class EventOrchestratorTests : IDisposable
         _source.Add(new EventCandidate(def, CreateScopeWithRoot(root)));
         _orchestrator.Tick(1.0, new GameDate(1950, 6, 15));
         var presented = _orchestrator.TryPresent(AlwaysAlive, AlwaysPlayer);
-        Assert.NotNull(presented);
+        presented.Should().NotBeNull();
 
         // Second tick, same root, should be blocked
         _source.Add(new EventCandidate(def, CreateScopeWithRoot(root)));
         _orchestrator.Tick(1.0, new GameDate(1950, 6, 16));
         presented = _orchestrator.TryPresent(AlwaysAlive, AlwaysPlayer);
-        Assert.Null(presented);
+        presented.Should().BeNull();
     }
 
     [Fact]
@@ -119,12 +120,12 @@ public class EventOrchestratorTests : IDisposable
         _source.Add(new EventCandidate(def, CreateScopeWithRoot(root1)));
         _orchestrator.Tick(1.0, new GameDate(1950, 6, 15));
         var p1 = _orchestrator.TryPresent(AlwaysAlive, AlwaysPlayer);
-        Assert.NotNull(p1);
+        p1.Should().NotBeNull();
 
         _source.Add(new EventCandidate(def, CreateScopeWithRoot(root2)));
         _orchestrator.Tick(1.0, new GameDate(1950, 6, 15));
         var p2 = _orchestrator.TryPresent(AlwaysAlive, AlwaysPlayer);
-        Assert.NotNull(p2);
+        p2.Should().NotBeNull();
     }
 
     #endregion
@@ -147,7 +148,7 @@ public class EventOrchestratorTests : IDisposable
         _source.Add(new EventCandidate(def, CreateScopeWithRoot(root)));
         _orchestrator.Tick(1.0, new GameDate(1950, 6, 20));
         var result = _orchestrator.TryPresent(AlwaysAlive, NeverPlayer);
-        Assert.Null(result);
+        result.Should().BeNull();
     }
 
     [Fact]
@@ -166,7 +167,7 @@ public class EventOrchestratorTests : IDisposable
         _source.Add(new EventCandidate(def, CreateScopeWithRoot(root)));
         _orchestrator.Tick(1.0, new GameDate(1950, 6, 26));
         var result = _orchestrator.TryPresent(AlwaysAlive, AlwaysPlayer);
-        Assert.NotNull(result);
+        result.Should().NotBeNull();
     }
 
     #endregion
@@ -179,8 +180,8 @@ public class EventOrchestratorTests : IDisposable
         var def = new PulseEventDefinition
         {
             Id = "cond_fail",
-            Title = "Conditional",
-            Description = "Conditional",
+            TitleKey = "Conditional",
+            DescriptionKey = "Conditional",
             MeanTimeToHappenDays = 30,
             Conditions = new AlwaysFalseCondition(),
             Options =
@@ -188,7 +189,7 @@ public class EventOrchestratorTests : IDisposable
                 new StandardOptionDefinition
                 {
                     Id = "opt1",
-                    DisplayText = "Option 1",
+                    DisplayTextKey = "Option 1",
                     AiWeight = new AiWeight { BaseWeight = 10 },
                     Outcome = new EventOutcome { Effects = [] }
                 }
@@ -200,7 +201,7 @@ public class EventOrchestratorTests : IDisposable
         _orchestrator.Tick(1.0, new GameDate(1950, 6, 15));
         var result = _orchestrator.TryPresent(AlwaysAlive, NeverPlayer);
 
-        Assert.Null(result);
+        result.Should().BeNull();
     }
 
     [Fact]
@@ -209,8 +210,8 @@ public class EventOrchestratorTests : IDisposable
         var def = new PulseEventDefinition
         {
             Id = "cond_pass",
-            Title = "Conditional",
-            Description = "Conditional",
+            TitleKey = "Conditional",
+            DescriptionKey = "Conditional",
             MeanTimeToHappenDays = 30,
             Conditions = new AlwaysTrueCondition(),
             Options =
@@ -218,7 +219,7 @@ public class EventOrchestratorTests : IDisposable
                 new StandardOptionDefinition
                 {
                     Id = "opt1",
-                    DisplayText = "Option 1",
+                    DisplayTextKey = "Option 1",
                     AiWeight = new AiWeight { BaseWeight = 10 },
                     Outcome = new EventOutcome { Effects = [] }
                 }
@@ -230,7 +231,7 @@ public class EventOrchestratorTests : IDisposable
         _orchestrator.Tick(1.0, new GameDate(1950, 6, 15));
         var result = _orchestrator.TryPresent(AlwaysAlive, AlwaysPlayer);
 
-        Assert.NotNull(result);
+        result.Should().NotBeNull();
     }
 
     #endregion
@@ -253,7 +254,7 @@ public class EventOrchestratorTests : IDisposable
         orchestrator.Tick(1.0, new GameDate(1950, 6, 15));
         var result = orchestrator.TryPresent(AlwaysAlive, NeverPlayer);
 
-        Assert.Null(result);
+        result.Should().BeNull();
     }
 
     #endregion
@@ -272,7 +273,7 @@ public class EventOrchestratorTests : IDisposable
         // Root is dead at presentation time
         var result = _orchestrator.TryPresent(_ => false, NeverPlayer);
 
-        Assert.Null(result);
+        result.Should().BeNull();
     }
 
     [Fact]
@@ -283,8 +284,8 @@ public class EventOrchestratorTests : IDisposable
         var def = new PulseEventDefinition
         {
             Id = "revalidate",
-            Title = "Revalidate",
-            Description = "Revalidate",
+            TitleKey = "Revalidate",
+            DescriptionKey = "Revalidate",
             MeanTimeToHappenDays = 30,
             Conditions = condition,
             Options =
@@ -292,7 +293,7 @@ public class EventOrchestratorTests : IDisposable
                 new StandardOptionDefinition
                 {
                     Id = "opt1",
-                    DisplayText = "Option 1",
+                    DisplayTextKey = "Option 1",
                     AiWeight = new AiWeight { BaseWeight = 10 },
                     Outcome = new EventOutcome { Effects = [] }
                 }
@@ -307,7 +308,7 @@ public class EventOrchestratorTests : IDisposable
         condition.Result = false;
         var result = _orchestrator.TryPresent(AlwaysAlive, NeverPlayer);
 
-        Assert.Null(result);
+        result.Should().BeNull();
     }
 
     #endregion
@@ -325,9 +326,9 @@ public class EventOrchestratorTests : IDisposable
 
         var result = _orchestrator.TryPresent(AlwaysAlive, AlwaysPlayer);
 
-        Assert.NotNull(result);
-        Assert.Equal("pulse_test", result!.Definition.Id);
-        Assert.NotEmpty(result.VisibleOptions);
+        result.Should().NotBeNull();
+        result!.Definition.Id.Should().Be("pulse_test");
+        result.VisibleOptions.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -337,15 +338,15 @@ public class EventOrchestratorTests : IDisposable
         var def = new PulseEventDefinition
         {
             Id = "ai_event",
-            Title = "AI",
-            Description = "AI",
+            TitleKey = "AI",
+            DescriptionKey = "AI",
             MeanTimeToHappenDays = 30,
             Options =
             [
                 new StandardOptionDefinition
                 {
                     Id = "opt1",
-                    DisplayText = "Option 1",
+                    DisplayTextKey = "Option 1",
                     AiWeight = new AiWeight { BaseWeight = 10 },
                     Outcome = new EventOutcome { Effects = [tracker] }
                 }
@@ -359,8 +360,8 @@ public class EventOrchestratorTests : IDisposable
         // AI root, should resolve, not return pending event
         var result = _orchestrator.TryPresent(AlwaysAlive, NeverPlayer);
 
-        Assert.Null(result); // returns null because it was AI-resolved
-        Assert.Equal(1, tracker.ApplyCount);
+        result.Should().BeNull(); // returns null because it was AI-resolved
+        tracker.ApplyCount.Should().Be(1);
     }
 
     #endregion
@@ -374,22 +375,22 @@ public class EventOrchestratorTests : IDisposable
         var def = new PulseEventDefinition
         {
             Id = "player_choice",
-            Title = "Choice",
-            Description = "Choice",
+            TitleKey = "Choice",
+            DescriptionKey = "Choice",
             MeanTimeToHappenDays = 30,
             Options =
             [
                 new StandardOptionDefinition
                 {
                     Id = "accept",
-                    DisplayText = "Accept",
+                    DisplayTextKey = "Accept",
                     AiWeight = new AiWeight { BaseWeight = 10 },
                     Outcome = new EventOutcome { Effects = [tracker] }
                 },
                 new StandardOptionDefinition
                 {
                     Id = "decline",
-                    DisplayText = "Decline",
+                    DisplayTextKey = "Decline",
                     AiWeight = new AiWeight { BaseWeight = 10 },
                     Outcome = new EventOutcome { Effects = [] }
                 }
@@ -400,7 +401,7 @@ public class EventOrchestratorTests : IDisposable
 
         _orchestrator.ResolvePlayerChoice(def, scope, "accept");
 
-        Assert.Equal(1, tracker.ApplyCount);
+        tracker.ApplyCount.Should().Be(1);
     }
 
     [Fact]
@@ -436,7 +437,7 @@ public class EventOrchestratorTests : IDisposable
 
         // Action event should have been enqueued (no MTTH gate)
         // But it gets AI-resolved, so result is null and the event ran
-        Assert.Null(result); // AI-resolved
+        result.Should().BeNull(); // AI-resolved
     }
 
     #endregion
@@ -449,14 +450,14 @@ public class EventOrchestratorTests : IDisposable
         var chained = new ChainedEventDefinition
         {
             Id = "chained_1",
-            Title = "Chained",
-            Description = "Chained",
+            TitleKey = "Chained",
+            DescriptionKey = "Chained",
             Options =
             [
                 new StandardOptionDefinition
                 {
                     Id = "opt1",
-                    DisplayText = "Option 1",
+                    DisplayTextKey = "Option 1",
                     AiWeight = new AiWeight { BaseWeight = 10 },
                     Outcome = new EventOutcome { Effects = [] }
                 }
@@ -465,16 +466,16 @@ public class EventOrchestratorTests : IDisposable
         _repo.Register(chained);
 
         var pulseEvents = _repo.GetAll<PulseEventDefinition>();
-        Assert.DoesNotContain(pulseEvents, e => e.Id == "chained_1");
+        pulseEvents.Should().NotContain(e => e.Id == "chained_1");
 
         var actionEvents = _repo.GetAll<ActionEventDefinition>();
-        Assert.DoesNotContain(actionEvents, e => e.Id == "chained_1");
+        actionEvents.Should().NotContain(e => e.Id == "chained_1");
 
         var storyEvents = _repo.GetAll<StoryBeatEventDefinition>();
-        Assert.DoesNotContain(storyEvents, e => e.Id == "chained_1");
+        storyEvents.Should().NotContain(e => e.Id == "chained_1");
 
         // But retrievable by ID
-        Assert.NotNull(_repo.GetById("chained_1"));
+        _repo.GetById("chained_1").Should().NotBeNull();
     }
 
     #endregion
@@ -489,7 +490,7 @@ public class EventOrchestratorTests : IDisposable
             .WithAnchor("root", root);
 
         var condition = new EventFired("some_event", "root");
-        Assert.False(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -500,7 +501,7 @@ public class EventOrchestratorTests : IDisposable
             .WithAnchor("root", root);
 
         var condition = new EventFired("some_event", "root");
-        Assert.False(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -513,7 +514,7 @@ public class EventOrchestratorTests : IDisposable
             .WithAnchor("root", root);
 
         var condition = new EventFired("some_event", "root");
-        Assert.True(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeTrue();
     }
 
     [Fact]
@@ -527,11 +528,11 @@ public class EventOrchestratorTests : IDisposable
 
         // 14 days since firing, "more than 10 days ago" should be true
         var condition = new EventFired("timed_event", "root", Comparison.GreaterThan, 10);
-        Assert.True(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeTrue();
 
         // "more than 20 days ago" should be false
         var condition2 = new EventFired("timed_event", "root", Comparison.GreaterThan, 20);
-        Assert.False(condition2.Evaluate(scope));
+        condition2.Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -545,11 +546,11 @@ public class EventOrchestratorTests : IDisposable
 
         // 5 days since firing, "less than 10 days ago" should be true
         var condition = new EventFired("timed_event", "root", Comparison.LessThan, 10);
-        Assert.True(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeTrue();
 
         // "less than 3 days ago" should be false
         var condition2 = new EventFired("timed_event", "root", Comparison.LessThan, 3);
-        Assert.False(condition2.Evaluate(scope));
+        condition2.Evaluate(scope).Should().BeFalse();
     }
 
     [Fact]
@@ -561,7 +562,7 @@ public class EventOrchestratorTests : IDisposable
 
         // Event never fired, any time comparison should return false
         var condition = new EventFired("never_fired", "root", Comparison.GreaterThan, 0);
-        Assert.False(condition.Evaluate(scope));
+        condition.Evaluate(scope).Should().BeFalse();
     }
 
     #endregion

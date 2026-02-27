@@ -9,7 +9,7 @@ namespace Mafia.Core.Events.Definition;
 public abstract class EventOptionDefinition
 {
     public required string Id { get; init; }
-    public required string DisplayText { get; init; }
+    public required string DisplayTextKey { get; init; }
 
     /// <summary>
     /// If set, this option is only visible when these conditions pass.
@@ -65,7 +65,7 @@ public sealed class RandomOptionDefinition : EventOptionDefinition
 /// </summary>
 public class EventOutcome
 {
-    public string? ResolutionText { get; init; }
+    public string? ResolutionTextKey { get; init; }
     public required IReadOnlyList<IEventEffect> Effects { get; init; }
 }
 

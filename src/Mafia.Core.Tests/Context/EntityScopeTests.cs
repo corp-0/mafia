@@ -1,4 +1,5 @@
 using fennecs;
+using FluentAssertions;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.Attributes;
 using Mafia.Core.Ecs.Components.Rank;
@@ -26,7 +27,7 @@ public class EntityScopeTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.Null(scope.ResolveAnchor("nobody"));
+        scope.ResolveAnchor("nobody").Should().BeNull();
     }
 
     [Fact]
@@ -37,7 +38,7 @@ public class EntityScopeTests : IDisposable
 
         scope.WithAnchor("vito", entity);
 
-        Assert.Equal(entity, scope.ResolveAnchor("vito"));
+        scope.ResolveAnchor("vito").Should().Be(entity);
     }
 
     [Fact]
@@ -50,7 +51,7 @@ public class EntityScopeTests : IDisposable
         scope.WithAnchor("don", first);
         scope.WithAnchor("don", second);
 
-        Assert.Equal(second, scope.ResolveAnchor("don"));
+        scope.ResolveAnchor("don").Should().Be(second);
     }
 
     [Fact]
@@ -61,19 +62,19 @@ public class EntityScopeTests : IDisposable
 
         var result = scope.WithAnchor("test", entity);
 
-        Assert.Same(scope, result);
+        result.Should().BeSameAs(scope);
     }
 
     #endregion
 
-    #region Navigate – Empty and Anchor-Only Paths
+    #region Navigate  Empty and Anchor-Only Paths
 
     [Fact]
     public void Navigate_EmptyPath_ReturnsNull()
     {
         var scope = CreateScope();
 
-        Assert.Null(scope.Navigate(""));
+        scope.Navigate("").Should().BeNull();
     }
 
     [Fact]
@@ -85,7 +86,7 @@ public class EntityScopeTests : IDisposable
 
         var result = scope.Navigate("player");
 
-        Assert.Equal(entity, result);
+        result.Should().Be(entity);
     }
 
     [Fact]
@@ -93,12 +94,12 @@ public class EntityScopeTests : IDisposable
     {
         var scope = CreateScope();
 
-        Assert.Null(scope.Navigate("ghost"));
+        scope.Navigate("ghost").Should().BeNull();
     }
 
     #endregion
 
-    #region Navigate – Single Relation Hop
+    #region Navigate  Single Relation Hop
 
     [Fact]
     public void Navigate_SingleRelation_FollowsLink()
@@ -113,7 +114,7 @@ public class EntityScopeTests : IDisposable
         // vito.FatherOf → Michael (the child)
         var result = scope.Navigate("vito.FatherOf");
 
-        Assert.Equal(michael, result);
+        result.Should().Be(michael);
     }
 
     [Fact]
@@ -123,12 +124,12 @@ public class EntityScopeTests : IDisposable
         var loner = SpawnEntity();
         scope.WithAnchor("loner", loner);
 
-        Assert.Null(scope.Navigate("loner.FatherOf"));
+        scope.Navigate("loner.FatherOf").Should().BeNull();
     }
 
     #endregion
 
-    #region Navigate – Multi-Segment Paths
+    #region Navigate  Multi-Segment Paths
 
     [Fact]
     public void Navigate_TwoHops_ResolvesChain()
@@ -146,7 +147,7 @@ public class EntityScopeTests : IDisposable
         // antonio.FatherOf.FatherOf → Vito → Michael (the grandson)
         var result = scope.Navigate("antonio.FatherOf.FatherOf");
 
-        Assert.Equal(michael, result);
+        result.Should().Be(michael);
     }
 
     [Fact]
@@ -167,7 +168,7 @@ public class EntityScopeTests : IDisposable
         // vito.FatherOf.HusbandOf.SisterOf → Michael → Carmela → Carlo
         var result = scope.Navigate("vito.FatherOf.HusbandOf.SisterOf");
 
-        Assert.Equal(carlo, result);
+        result.Should().Be(carlo);
     }
 
     [Fact]
@@ -181,7 +182,7 @@ public class EntityScopeTests : IDisposable
         vito.Add(new FatherOf(michael), michael);
         scope.WithAnchor("vito", vito);
 
-        Assert.Null(scope.Navigate("vito.FatherOf.MotherOf"));
+        scope.Navigate("vito.FatherOf.MotherOf").Should().BeNull();
     }
 
     [Fact]
@@ -191,12 +192,12 @@ public class EntityScopeTests : IDisposable
         var entity = SpawnEntity();
         scope.WithAnchor("entity", entity);
 
-        Assert.Null(scope.Navigate("entity.NonExistentRelation"));
+        scope.Navigate("entity.NonExistentRelation").Should().BeNull();
     }
 
     #endregion
 
-    #region Navigate – Different Relation Types
+    #region Navigate  Different Relation Types
 
     [Fact]
     public void Navigate_MotherOf_Resolves()
@@ -208,7 +209,7 @@ public class EntityScopeTests : IDisposable
         carmela.Add(new MotherOf(michael), michael);
         scope.WithAnchor("carmela", carmela);
 
-        Assert.Equal(michael, scope.Navigate("carmela.MotherOf"));
+        scope.Navigate("carmela.MotherOf").Should().Be(michael);
     }
 
     [Fact]
@@ -225,8 +226,8 @@ public class EntityScopeTests : IDisposable
         scope.WithAnchor("sonny", sonny);
         scope.WithAnchor("connie", connie);
 
-        Assert.Equal(michael, scope.Navigate("sonny.BrotherOf"));
-        Assert.Equal(michael, scope.Navigate("connie.SisterOf"));
+        scope.Navigate("sonny.BrotherOf").Should().Be(michael);
+        scope.Navigate("connie.SisterOf").Should().Be(michael);
     }
 
     [Fact]
@@ -242,8 +243,8 @@ public class EntityScopeTests : IDisposable
         scope.WithAnchor("vito", vito);
         scope.WithAnchor("carmela", carmela);
 
-        Assert.Equal(carmela, scope.Navigate("vito.HusbandOf"));
-        Assert.Equal(vito, scope.Navigate("carmela.WifeOf"));
+        scope.Navigate("vito.HusbandOf").Should().Be(carmela);
+        scope.Navigate("carmela.WifeOf").Should().Be(vito);
     }
 
     [Fact]
@@ -257,12 +258,12 @@ public class EntityScopeTests : IDisposable
         tommy.Add(new SubordinateOf(don), don);
         scope.WithAnchor("tommy", tommy);
 
-        Assert.Equal(don, scope.Navigate("tommy.SubordinateOf"));
+        scope.Navigate("tommy.SubordinateOf").Should().Be(don);
     }
 
     #endregion
 
-    #region Navigate – Multiple Anchors
+    #region Navigate  Multiple Anchors
 
     [Fact]
     public void Navigate_MultipleAnchors_IndependentResolution()
@@ -279,298 +280,158 @@ public class EntityScopeTests : IDisposable
         scope.WithAnchor("vito", vito);
         scope.WithAnchor("carlo", carlo);
 
-        Assert.Equal(michael, scope.Navigate("vito.FatherOf"));
-        Assert.Equal(sonny, scope.Navigate("carlo.FatherOf"));
+        scope.Navigate("vito.FatherOf").Should().Be(michael);
+        scope.Navigate("carlo.FatherOf").Should().Be(sonny);
     }
 
     #endregion
 
-    #region GetComponent
+    #region EntityExtensions  GetComponent
 
     [Fact]
-    public void GetComponent_ReturnsComponentValue()
+    public void GetComponent_ReturnsValue()
     {
-        var scope = CreateScope();
         var entity = SpawnEntity();
         entity.Add(new Muscle(75));
-        scope.WithAnchor("player", entity);
 
-        var muscle = scope.GetComponent<Muscle>("player");
+        var muscle = entity.GetComponent<Muscle>();
 
-        Assert.NotNull(muscle);
-        Assert.Equal(75, muscle.Value.Amount);
+        muscle.Should().NotBeNull();
+        muscle.Value.Amount.Should().Be(75);
     }
 
     [Fact]
     public void GetComponent_MissingComponent_ReturnsNull()
     {
-        var scope = CreateScope();
         var entity = SpawnEntity();
-        scope.WithAnchor("player", entity);
 
-        Assert.Null(scope.GetComponent<Muscle>("player"));
-    }
-
-    [Fact]
-    public void GetComponent_InvalidPath_ReturnsNull()
-    {
-        var scope = CreateScope();
-
-        Assert.Null(scope.GetComponent<Muscle>("nobody"));
-    }
-
-    [Fact]
-    public void GetComponent_ThroughRelation_ResolvesAndReturns()
-    {
-        var scope = CreateScope();
-        var vito = SpawnEntity();
-        var michael = SpawnEntity();
-        michael.Add(new Muscle(90));
-        // Vito is father of Michael
-        vito.Add(new FatherOf(michael), michael);
-        scope.WithAnchor("vito", vito);
-
-        // Get Muscle component from vito.FatherOf (→ Michael)
-        var muscle = scope.GetComponent<Muscle>("vito.FatherOf");
-
-        Assert.NotNull(muscle);
-        Assert.Equal(90, muscle.Value.Amount);
+        entity.GetComponent<Muscle>().Should().BeNull();
     }
 
     #endregion
 
-    #region HasTag
+    #region EntityExtensions  TryAddComponent
 
     [Fact]
-    public void HasTag_EntityHasComponent_ReturnsTrue()
+    public void TryAddComponent_AddsNewComponent()
     {
-        var scope = CreateScope();
+        var entity = SpawnEntity();
+
+        var success = entity.TryAddComponent(new Rank(RankId.Soldier));
+
+        success.Should().BeTrue();
+        entity.Has<Rank>().Should().BeTrue();
+        entity.Ref<Rank>().Id.Should().Be(RankId.Soldier);
+    }
+
+    [Fact]
+    public void TryAddComponent_AlreadyExists_ReturnsFalse()
+    {
+        var entity = SpawnEntity();
+        entity.Add(new Rank(RankId.Soldier));
+
+        entity.TryAddComponent(new Rank(RankId.Boss)).Should().BeFalse();
+    }
+
+    #endregion
+
+    #region EntityExtensions  TryRemoveComponent
+
+    [Fact]
+    public void TryRemoveComponent_RemovesExistingComponent()
+    {
         var entity = SpawnEntity();
         entity.Add<Arrested>();
-        scope.WithAnchor("player", entity);
 
-        Assert.True(scope.HasTag<Arrested>("player"));
+        var success = entity.TryRemoveComponent<Arrested>();
+
+        success.Should().BeTrue();
+        entity.Has<Arrested>().Should().BeFalse();
     }
 
     [Fact]
-    public void HasTag_EntityLacksComponent_ReturnsFalse()
+    public void TryRemoveComponent_MissingComponent_ReturnsFalse()
     {
-        var scope = CreateScope();
         var entity = SpawnEntity();
-        scope.WithAnchor("player", entity);
 
-        Assert.False(scope.HasTag<Arrested>("player"));
-    }
-
-    [Fact]
-    public void HasTag_InvalidPath_ReturnsFalse()
-    {
-        var scope = CreateScope();
-
-        Assert.False(scope.HasTag<Arrested>("nobody"));
+        entity.TryRemoveComponent<Arrested>().Should().BeFalse();
     }
 
     #endregion
 
-    #region SetComponent
+    #region EntityExtensions  ModifyComponent
 
     [Fact]
-    public void SetComponent_UpdatesExistingComponent()
+    public void ModifyComponent_TransformsExistingComponent()
     {
-        var scope = CreateScope();
         var entity = SpawnEntity();
         entity.Add(new Muscle(50));
-        scope.WithAnchor("player", entity);
 
-        var success = scope.SetComponent("player", new Muscle(80));
+        var success = entity.ModifyComponent<Muscle>(m => m with { Amount = m.Amount + 30 });
 
-        Assert.True(success);
-        Assert.Equal(80, entity.Ref<Muscle>().Amount);
+        success.Should().BeTrue();
+        entity.Ref<Muscle>().Amount.Should().Be(80);
     }
 
     [Fact]
-    public void SetComponent_MissingComponent_ReturnsFalse()
+    public void ModifyComponent_MissingComponent_ReturnsFalse()
     {
-        var scope = CreateScope();
         var entity = SpawnEntity();
-        scope.WithAnchor("player", entity);
 
-        Assert.False(scope.SetComponent("player", new Muscle(80)));
-    }
-
-    [Fact]
-    public void SetComponent_InvalidPath_ReturnsFalse()
-    {
-        var scope = CreateScope();
-
-        Assert.False(scope.SetComponent("nobody", new Muscle(80)));
+        entity.ModifyComponent<Muscle>(m => m with { Amount = 100 }).Should().BeFalse();
     }
 
     #endregion
 
-    #region AddComponent
+    #region EntityExtensions  TryAddRelation / TryRemoveRelation
 
     [Fact]
-    public void AddComponent_AddsNewComponent()
+    public void TryAddRelation_AddsNewRelation()
     {
-        var scope = CreateScope();
-        var entity = SpawnEntity();
-        scope.WithAnchor("player", entity);
-
-        var success = scope.AddComponent("player", new Rank(RankId.Soldier));
-
-        Assert.True(success);
-        Assert.True(entity.Has<Rank>());
-        Assert.Equal(RankId.Soldier, entity.Ref<Rank>().Id);
-    }
-
-    [Fact]
-    public void AddComponent_AlreadyExists_ReturnsFalse()
-    {
-        var scope = CreateScope();
-        var entity = SpawnEntity();
-        entity.Add(new Rank(RankId.Soldier));
-        scope.WithAnchor("player", entity);
-
-        Assert.False(scope.AddComponent("player", new Rank(RankId.Boss)));
-    }
-
-    [Fact]
-    public void AddComponent_InvalidPath_ReturnsFalse()
-    {
-        var scope = CreateScope();
-
-        Assert.False(scope.AddComponent("nobody", new Rank(RankId.Soldier)));
-    }
-
-    #endregion
-
-    #region HasRelation
-
-    [Fact]
-    public void HasRelation_ExistingRelation_ReturnsTrue()
-    {
-        var scope = CreateScope();
-        var vito = SpawnEntity();
-        var michael = SpawnEntity();
-        // Vito is father of Michael
-        vito.Add(new FatherOf(michael), michael);
-        scope.WithAnchor("vito", vito);
-        scope.WithAnchor("michael", michael);
-
-        Assert.True(scope.HasRelation<FatherOf>("vito", "michael"));
-    }
-
-    [Fact]
-    public void HasRelation_NoRelation_ReturnsFalse()
-    {
-        var scope = CreateScope();
         var a = SpawnEntity();
         var b = SpawnEntity();
-        scope.WithAnchor("a", a);
-        scope.WithAnchor("b", b);
 
-        Assert.False(scope.HasRelation<FatherOf>("a", "b"));
+        var success = a.TryAddRelation<FatherOf>(b);
+
+        success.Should().BeTrue();
+        a.Has<FatherOf>(b).Should().BeTrue();
     }
 
     [Fact]
-    public void HasRelation_InvalidFromPath_ReturnsFalse()
+    public void TryAddRelation_AlreadyExists_ReturnsFalse()
     {
-        var scope = CreateScope();
-        var b = SpawnEntity();
-        scope.WithAnchor("b", b);
-
-        Assert.False(scope.HasRelation<FatherOf>("nobody", "b"));
-    }
-
-    [Fact]
-    public void HasRelation_InvalidToPath_ReturnsFalse()
-    {
-        var scope = CreateScope();
         var a = SpawnEntity();
-        scope.WithAnchor("a", a);
+        var b = SpawnEntity();
+        a.Add(new FatherOf(b), b);
 
-        Assert.False(scope.HasRelation<FatherOf>("a", "nobody"));
+        a.TryAddRelation<FatherOf>(b).Should().BeFalse();
+    }
+
+    [Fact]
+    public void TryRemoveRelation_RemovesExistingRelation()
+    {
+        var a = SpawnEntity();
+        var b = SpawnEntity();
+        a.Add(new FatherOf(b), b);
+
+        var success = a.TryRemoveRelation<FatherOf>(b);
+
+        success.Should().BeTrue();
+        a.Has<FatherOf>(b).Should().BeFalse();
+    }
+
+    [Fact]
+    public void TryRemoveRelation_MissingRelation_ReturnsFalse()
+    {
+        var a = SpawnEntity();
+        var b = SpawnEntity();
+
+        a.TryRemoveRelation<FatherOf>(b).Should().BeFalse();
     }
 
     #endregion
 
-    #region GetRank
-
-    [Fact]
-    public void GetRank_Boss_ReturnsBoss()
-    {
-        var scope = CreateScope();
-        var entity = SpawnEntity();
-        entity.Add(new Rank(RankId.Boss));
-        scope.WithAnchor("don", entity);
-
-        Assert.Equal(RankId.Boss, scope.GetRank("don"));
-    }
-
-    [Fact]
-    public void GetRank_Soldier_ReturnsSoldier()
-    {
-        var scope = CreateScope();
-        var entity = SpawnEntity();
-        entity.Add(new Rank(RankId.Soldier));
-        scope.WithAnchor("grunt", entity);
-
-        Assert.Equal(RankId.Soldier, scope.GetRank("grunt"));
-    }
-
-    [Fact]
-    public void GetRank_NoRank_ReturnsNull()
-    {
-        var scope = CreateScope();
-        var entity = SpawnEntity();
-        scope.WithAnchor("civilian", entity);
-
-        Assert.Null(scope.GetRank("civilian"));
-    }
-
-    [Fact]
-    public void GetRank_InvalidPath_ReturnsNull()
-    {
-        var scope = CreateScope();
-
-        Assert.Null(scope.GetRank("nobody"));
-    }
-
-    [Fact]
-    public void GetRank_ThroughRelation_ResolvesAndReturnsRank()
-    {
-        var scope = CreateScope();
-        var tommy = SpawnEntity();
-        var don = SpawnEntity();
-        don.Add(new Rank(RankId.Boss));
-        // Tommy is subordinate of the Don
-        tommy.Add(new SubordinateOf(don), don);
-        scope.WithAnchor("tommy", tommy);
-
-        Assert.Equal(RankId.Boss, scope.GetRank("tommy.SubordinateOf"));
-    }
-
-    [Fact]
-    public void GetRank_IsMutuallyExclusive()
-    {
-        // A single Rank component means only one rank per entity
-        var scope = CreateScope();
-        var entity = SpawnEntity();
-        entity.Add(new Rank(RankId.Soldier));
-        scope.WithAnchor("entity", entity);
-
-        Assert.Equal(RankId.Soldier, scope.GetRank("entity"));
-
-        // Promoting to Boss replaces the rank
-        scope.SetComponent("entity", new Rank(RankId.Boss));
-
-        Assert.Equal(RankId.Boss, scope.GetRank("entity"));
-    }
-
-    #endregion
-
-    #region Navigate – Edge Cases
+    #region Navigate Edge Cases
 
     [Fact]
     public void Navigate_TrailingDot_ReturnsAnchorEntity()
@@ -581,7 +442,7 @@ public class EntityScopeTests : IDisposable
         var entity = SpawnEntity();
         scope.WithAnchor("player", entity);
 
-        Assert.Equal(entity, scope.Navigate("player."));
+        scope.Navigate("player.").Should().Be(entity);
     }
 
     [Fact]
@@ -592,7 +453,7 @@ public class EntityScopeTests : IDisposable
         var entity = SpawnEntity();
         scope.WithAnchor("player", entity);
 
-        Assert.Null(scope.Navigate("player..FatherOf"));
+        scope.Navigate("player..FatherOf").Should().BeNull();
     }
 
     [Fact]
@@ -601,7 +462,7 @@ public class EntityScopeTests : IDisposable
         var scope = CreateScope();
 
         // "." → anchor = "", which won't match
-        Assert.Null(scope.Navigate("."));
+        scope.Navigate(".").Should().BeNull();
     }
 
     [Fact]
@@ -617,9 +478,9 @@ public class EntityScopeTests : IDisposable
         vito.Add(new MotherOf(connie), connie);
         scope.WithAnchor("vito", vito);
 
-        Assert.Equal(michael, scope.Navigate("vito.FatherOf"));
-        Assert.Equal(connie, scope.Navigate("vito.MotherOf"));
-        Assert.Equal(vito, scope.Navigate("vito"));
+        scope.Navigate("vito.FatherOf").Should().Be(michael);
+        scope.Navigate("vito.MotherOf").Should().Be(connie);
+        scope.Navigate("vito").Should().Be(vito);
     }
 
     #endregion
@@ -635,9 +496,9 @@ public class EntityScopeTests : IDisposable
 
         new DisableCharacter<Arrested>("target").Apply(scope);
 
-        Assert.True(scope.HasTag<Arrested>("target"));
-        Assert.True(scope.HasTag<Disabled>("target"));
-        Assert.Equal(1, scope.GetComponent<Disabled>("target")!.Value.Count);
+        entity.Has<Arrested>().Should().BeTrue();
+        entity.Has<Disabled>().Should().BeTrue();
+        entity.Ref<Disabled>().Count.Should().Be(1);
     }
 
     [Fact]
@@ -650,9 +511,9 @@ public class EntityScopeTests : IDisposable
         new DisableCharacter<Arrested>("target").Apply(scope);
         new DisableCharacter<Killed>("target").Apply(scope);
 
-        Assert.True(scope.HasTag<Arrested>("target"));
-        Assert.True(scope.HasTag<Killed>("target"));
-        Assert.Equal(2, scope.GetComponent<Disabled>("target")!.Value.Count);
+        entity.Has<Arrested>().Should().BeTrue();
+        entity.Has<Killed>().Should().BeTrue();
+        entity.Ref<Disabled>().Count.Should().Be(2);
     }
 
     [Fact]
@@ -665,7 +526,7 @@ public class EntityScopeTests : IDisposable
         new DisableCharacter<Arrested>("target").Apply(scope);
         new DisableCharacter<Arrested>("target").Apply(scope);
 
-        Assert.Equal(1, scope.GetComponent<Disabled>("target")!.Value.Count);
+        entity.Ref<Disabled>().Count.Should().Be(1);
     }
 
     [Fact]
@@ -678,8 +539,8 @@ public class EntityScopeTests : IDisposable
         new DisableCharacter<Arrested>("target").Apply(scope);
         new EnableCharacter<Arrested>("target").Apply(scope);
 
-        Assert.False(scope.HasTag<Arrested>("target"));
-        Assert.False(scope.HasTag<Disabled>("target"));
+        entity.Has<Arrested>().Should().BeFalse();
+        entity.Has<Disabled>().Should().BeFalse();
     }
 
     [Fact]
@@ -693,10 +554,10 @@ public class EntityScopeTests : IDisposable
         new DisableCharacter<Killed>("target").Apply(scope);
         new EnableCharacter<Arrested>("target").Apply(scope);
 
-        Assert.False(scope.HasTag<Arrested>("target"));
-        Assert.True(scope.HasTag<Killed>("target"));
-        Assert.True(scope.HasTag<Disabled>("target"));
-        Assert.Equal(1, scope.GetComponent<Disabled>("target")!.Value.Count);
+        entity.Has<Arrested>().Should().BeFalse();
+        entity.Has<Killed>().Should().BeTrue();
+        entity.Has<Disabled>().Should().BeTrue();
+        entity.Ref<Disabled>().Count.Should().Be(1);
     }
 
     [Fact]
@@ -711,7 +572,7 @@ public class EntityScopeTests : IDisposable
         new EnableCharacter<Arrested>("target").Apply(scope);
         new EnableCharacter<Killed>("target").Apply(scope);
 
-        Assert.False(scope.HasTag<Disabled>("target"));
+        entity.Has<Disabled>().Should().BeFalse();
     }
 
     [Fact]
@@ -723,7 +584,7 @@ public class EntityScopeTests : IDisposable
 
         new EnableCharacter<Arrested>("target").Apply(scope);
 
-        Assert.False(scope.HasTag<Disabled>("target"));
+        entity.Has<Disabled>().Should().BeFalse();
     }
 
     #endregion

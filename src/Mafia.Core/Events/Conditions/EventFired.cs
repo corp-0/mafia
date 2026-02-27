@@ -1,3 +1,4 @@
+using fennecs;
 using Mafia.Core.Context;
 using Mafia.Core.Events.Conditions.Interfaces;
 
@@ -14,18 +15,15 @@ public sealed class EventFired(string eventId, string entityPath, Comparison? co
     public bool Evaluate(EntityScope context)
     {
         if (context.EventHistory is not { } history) return false;
-
-        var entity = context.Navigate(entityPath);
-        if (entity is not { } resolved) return false;
-
+        if (!context.TryNavigate(entityPath, out Entity entity)) return false;
         if (comparison is null || days is null)
         {
             // Simple mode: just check if the event has ever fired
-            return history.HasFired(eventId, resolved);
+            return history.HasFired(eventId, entity);
         }
 
         // Time-comparison mode
-        var lastFired = history.LastFiredDate(eventId, resolved);
+        var lastFired = history.LastFiredDate(eventId, entity);
         if (lastFired is null) return false;
 
         var daysSince = context.CurrentDate.DaysSince(lastFired.Value);
