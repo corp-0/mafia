@@ -87,3 +87,23 @@ public readonly struct GranddaughterOf(Entity target): IFamilyRelation
 {
     public Entity Target { get; init; } = target;
 }
+
+public readonly struct ParentOf(Entity target): IFamilyRelation
+{
+    public Entity Target { get; init; } = target;
+}
+
+public readonly struct SpouseOf(Entity target): IFamilyRelation
+{
+    public Entity Target { get; init; } = target;
+}
+
+public readonly struct HalfBrotherOf(Entity target): IFamilyRelation
+{
+    public Entity Target { get; init; } = target;
+}
+
+public readonly struct HalfSisterOf(Entity target): IFamilyRelation
+{
+    public Entity Target { get; init; } = target;
+}

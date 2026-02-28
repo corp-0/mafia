@@ -7,6 +7,7 @@ namespace Mafia.Core.Context;
 public sealed partial class EntityScope(World thisWorld)
 {
     private readonly Dictionary<string, Entity> _anchors = new();
+    private readonly Dictionary<string, object> _metadata = new();
 
     public World World => thisWorld;
 
@@ -35,6 +36,14 @@ public sealed partial class EntityScope(World thisWorld)
     {
         return _anchors.TryGetValue(name, out var entity) ? entity : null;
     }
+
+    public EntityScope WithMeta(string key, object value)
+    {
+        _metadata[key] = value;
+        return this;
+    }
+
+    public object? GetMeta(string key) => _metadata.GetValueOrDefault(key);
 
     public bool TryNavigate(string dottedPath, out Entity entity)
     {

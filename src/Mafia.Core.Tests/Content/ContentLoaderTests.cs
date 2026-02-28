@@ -1,18 +1,20 @@
 using FluentAssertions;
 using Mafia.Core.Content;
 using Mafia.Core.Content.Registries;
+using Mafia.Core.Opinions;
 using Xunit;
 
 namespace Mafia.Core.Tests.Content;
 
 public class ContentLoaderTests
 {
-    private readonly EventDefinitionRepository _repository = new();
+    private readonly EventDefinitionRepository _eventRepository = new();
+    private readonly OpinionRuleRepository _opinionRepository = new();
     private readonly ContentLoader _loader;
 
     public ContentLoaderTests()
     {
-        _loader = new ContentLoader(_repository);
+        _loader = new ContentLoader(_eventRepository, _opinionRepository);
     }
 
     private const string MANIFEST_TOML = """
@@ -33,6 +35,17 @@ public class ContentLoaderTests
         id = "opt_a"
         display_text_key = "OK"
         resolution_text_key = "Done."
+        """;
+
+    private static string MakeOpinionRuleToml(string id, int modifier = 10) => $"""
+        id = "{id}"
+        modifier = {modifier}
+        tooltip_key = "opinion.{id}"
+
+        [conditions]
+        type = "has_tag"
+        tag = "family_member"
+        path = "target"
         """;
 
     // ═══════════════════════════════════════════════
@@ -108,8 +121,8 @@ public class ContentLoaderTests
             var packs = _loader.DiscoverPacks(root);
             _loader.LoadPacks(packs);
 
-            _repository.GetById("evt_a").Should().NotBeNull();
-            _repository.GetById("evt_b").Should().NotBeNull();
+            _eventRepository.GetById("evt_a").Should().NotBeNull();
+            _eventRepository.GetById("evt_b").Should().NotBeNull();
         }
         finally { Cleanup(root); }
     }
@@ -165,32 +178,32 @@ public class ContentLoaderTests
             _loader.LoadPacks(packs);
 
             // The recruitment event was upserted, mod's version wins (loaded later)
-            var recruitment = _repository.GetById("recruitment");
+            var recruitment = _eventRepository.GetById("recruitment");
             recruitment.Should().NotBeNull();
             recruitment!.TitleKey.Should().Be("Rebalanced Recruitment");
 
             // The betrayal event from base is still there (not touched by mod)
-            _repository.GetById("betrayal").Should().NotBeNull();
+            _eventRepository.GetById("betrayal").Should().NotBeNull();
         }
         finally { Cleanup(root); }
     }
 
     [Fact]
-    public void LoadPacks_ExcludesManifestFromEventParsing()
+    public void LoadPacks_IgnoresTomlFilesOutsideContentDirectories()
     {
         var root = CreateTempDir();
         try
         {
             var packDir = CreatePack(root, "base", MANIFEST_TOML);
-            File.WriteAllText(Path.Combine(packDir, "event.toml"), MakePulseToml("evt_real"));
+            // A stray toml in the pack root should not be loaded
+            File.WriteAllText(Path.Combine(packDir, "stray.toml"), MakePulseToml("evt_stray"));
 
             var packs = _loader.DiscoverPacks(root);
 
-            // Should not throw trying to parse content_pack.toml as an event
             var act = () => _loader.LoadPacks(packs);
             act.Should().NotThrow();
 
-            _repository.GetById("evt_real").Should().NotBeNull();
+            _eventRepository.GetById("evt_stray").Should().BeNull();
         }
         finally { Cleanup(root); }
     }
@@ -244,10 +257,116 @@ public class ContentLoaderTests
             _loader.LoadPacks(packs);
 
             // Higher load_order loaded last → upserts over low
-            var evt = _repository.GetById("shared");
+            var evt = _eventRepository.GetById("shared");
             evt.Should().NotBeNull();
             evt.Should().NotBeNull();
             evt!.TitleKey.Should().Be("High");
+        }
+        finally { Cleanup(root); }
+    }
+
+    [Fact]
+    public void LoadPacks_DuplicatePackIds_Throws()
+    {
+        var root = CreateTempDir();
+        try
+        {
+            CreatePack(root, "pack_a", """
+                id = "same_id"
+                name = "Pack A"
+                load_order = 0
+                """);
+            CreatePack(root, "pack_b", """
+                id = "same_id"
+                name = "Pack B"
+                load_order = 10
+                """);
+
+            var packs = _loader.DiscoverPacks(root);
+
+            var act = () => _loader.LoadPacks(packs);
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage("*same_id*");
+        }
+        finally { Cleanup(root); }
+    }
+
+    // ═══════════════════════════════════════════════
+    //  LoadPacks - Opinion Rules
+    // ═══════════════════════════════════════════════
+
+    [Fact]
+    public void LoadPacks_LoadsOpinionRulesFromPack()
+    {
+        var root = CreateTempDir();
+        try
+        {
+            var packDir = CreatePack(root, "base", MANIFEST_TOML);
+            var opinionsDir = Path.Combine(packDir, "Opinions");
+            Directory.CreateDirectory(opinionsDir);
+            File.WriteAllText(Path.Combine(opinionsDir, "family.toml"), MakeOpinionRuleToml("same_family", 20));
+            File.WriteAllText(Path.Combine(opinionsDir, "rival.toml"), MakeOpinionRuleToml("rival_gang", -15));
+
+            var packs = _loader.DiscoverPacks(root);
+            _loader.LoadPacks(packs);
+
+            _opinionRepository.GetById("same_family").Should().NotBeNull();
+            _opinionRepository.GetById("rival_gang").Should().NotBeNull();
+            _opinionRepository.GetAll().Should().HaveCount(2);
+        }
+        finally { Cleanup(root); }
+    }
+
+    [Fact]
+    public void LoadPacks_NoOpinionsDirectory_DoesNotThrow()
+    {
+        var root = CreateTempDir();
+        try
+        {
+            var packDir = CreatePack(root, "base", MANIFEST_TOML);
+            var eventsDir = Path.Combine(packDir, "Events");
+            Directory.CreateDirectory(eventsDir);
+            File.WriteAllText(Path.Combine(eventsDir, "e.toml"), MakePulseToml("evt_1"));
+
+            var packs = _loader.DiscoverPacks(root);
+
+            var act = () => _loader.LoadPacks(packs);
+            act.Should().NotThrow();
+
+            _opinionRepository.GetAll().Should().BeEmpty();
+        }
+        finally { Cleanup(root); }
+    }
+
+    [Fact]
+    public void LoadPacks_ModOverridesOpinionRule()
+    {
+        var root = CreateTempDir();
+        try
+        {
+            var basePack = CreatePack(root, "base", """
+                id = "base"
+                name = "Base"
+                load_order = 0
+                """);
+            Directory.CreateDirectory(Path.Combine(basePack, "Opinions"));
+            File.WriteAllText(Path.Combine(basePack, "Opinions", "family.toml"), MakeOpinionRuleToml("same_family", 20));
+
+            var modPack = CreatePack(root, "mod", """
+                id = "mod"
+                name = "Mod"
+                load_order = 10
+                """);
+            Directory.CreateDirectory(Path.Combine(modPack, "Opinions"));
+            File.WriteAllText(Path.Combine(modPack, "Opinions", "family.toml"), MakeOpinionRuleToml("same_family", 50));
+
+            var packs = _loader.DiscoverPacks(root);
+            _loader.LoadPacks(packs);
+
+            var rule = _opinionRepository.GetById("same_family");
+            rule.Should().NotBeNull();
+            rule!.Modifier.Should().Be(50);
+            _opinionRepository.GetAll().Should().HaveCount(1);
         }
         finally { Cleanup(root); }
     }

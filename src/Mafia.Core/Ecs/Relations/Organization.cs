@@ -19,8 +19,7 @@ public readonly struct OwnerOf(Entity target) : IRelation
     public Entity Target { get; init; } = target;
 }
 
-public readonly struct Owes(Entity target) : IRelation
+public readonly struct MemberOf(Entity target) : IRelation
 {
     public Entity Target { get; init; } = target;
-    public int Amount { get; init; }
 }

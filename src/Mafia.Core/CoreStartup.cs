@@ -10,6 +10,7 @@ public static class CoreStartup
 {
     public static void ConfigureServices(IServiceCollection services)
     {
+        services.AddSingleton<IOpinionRuleRepository, OpinionRuleRepository>();
         services.AddSingleton<IEventDefinitionRepository, EventDefinitionRepository>();
         services.AddSingleton<IEventHistory, EventHistory>();
         services.AddSingleton<EventQueue>();

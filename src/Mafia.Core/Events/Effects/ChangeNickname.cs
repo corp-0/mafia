@@ -11,7 +11,7 @@ public class ChangeNickname(string path, string newNickname) : IEventEffect, IDe
     public void Apply(EntityScope context)
     {
         if (!context.TryNavigate(path, out Entity entity)) return;
-        entity.ModifyComponent<Identity>(id => id with { NickName = newNickname });
+        entity.ModifyComponent<CharacterName>(cn => cn with { NickName = newNickname });
     }
 
     public Localizable Describe(EntityScope context) =>

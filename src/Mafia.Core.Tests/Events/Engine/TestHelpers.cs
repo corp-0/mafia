@@ -44,3 +44,16 @@ internal sealed class ListTriggerSource : IEventTriggerSource
         return result;
     }
 }
+
+internal sealed class NullActionTrigger : IActionTrigger
+{
+    public void OnAction(string actionId, EntityScope scope) { }
+}
+
+internal sealed class RecordingActionTrigger : IActionTrigger
+{
+    public List<(string ActionId, EntityScope Scope)> Invocations { get; } = [];
+
+    public void OnAction(string actionId, EntityScope scope) =>
+        Invocations.Add((actionId, scope));
+}

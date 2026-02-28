@@ -1,12 +1,23 @@
-﻿namespace Mafia.Core.Ecs.Components.Identity;
+﻿using Mafia.Core.Ecs.Components.Interfaces;
 
-//TODO: move somewhere when we have more uses of this
-public enum Gender
+namespace Mafia.Core.Ecs.Components.Identity;
+
+public enum Sex
 {
     Male,
     Female
 }
 
-//TODO: split into components if we are querying them independently in the future.
-public record struct Identity(string Name, string NickName, int Age, Gender Gender);
+public record struct CharacterName(string Name, string NickName);
 
+public record struct Age : IStatComponent
+{
+    public int Amount { get; set; }
+    int IStatComponent.Min => 0;
+}
+
+public record struct Surname(string Value);
+
+public record struct OrgName(string Value);
+
+public record struct BirthDay(int Month, int Day);

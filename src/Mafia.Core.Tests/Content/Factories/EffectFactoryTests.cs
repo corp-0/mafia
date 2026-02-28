@@ -185,4 +185,44 @@ public class EffectFactoryTests
         var effect = EffectFactory.Create(dto);
         effect.Should().BeOfType<AddRelationship<FatherOf>>();
     }
+
+    [Fact]
+    public void Create_SettleExpenses_ReturnsSettleExpensesEffect()
+    {
+        var dto = new EffectDto { Type = "settle_expenses", Path = "root" };
+        var effect = EffectFactory.Create(dto);
+        effect.Should().BeOfType<SettleExpenses>();
+    }
+
+    [Fact]
+    public void Create_AddExpense_ReturnsAddExpenseEffect()
+    {
+        var dto = new EffectDto { Type = "add_expense", Path = "root", Category = "food", Amount = 50 };
+        var effect = EffectFactory.Create(dto);
+        effect.Should().BeOfType<AddExpense>();
+    }
+
+    [Fact]
+    public void Create_AddExpense_WithLabel_ReturnsAddExpenseEffect()
+    {
+        var dto = new EffectDto { Type = "add_expense", Path = "root", Category = "entertainment", Amount = 200, LabelKey = "expense.bribe" };
+        var effect = EffectFactory.Create(dto);
+        effect.Should().BeOfType<AddExpense>();
+    }
+
+    [Fact]
+    public void Create_AddExpense_CaseInsensitiveCategory()
+    {
+        var dto = new EffectDto { Type = "add_expense", Path = "root", Category = "Medical", Amount = 75 };
+        var effect = EffectFactory.Create(dto);
+        effect.Should().BeOfType<AddExpense>();
+    }
+
+    [Fact]
+    public void Create_AddExpense_InvalidCategory_Throws()
+    {
+        var dto = new EffectDto { Type = "add_expense", Path = "root", Category = "nonexistent", Amount = 50 };
+        var act = () => EffectFactory.Create(dto);
+        act.Should().Throw<ArgumentException>();
+    }
 }

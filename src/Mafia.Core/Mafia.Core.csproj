@@ -12,7 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Content\Registries\" />
       <Folder Include="Ecs\Components\Tags\" />
       <Folder Include="Events\Engine\" />
     </ItemGroup>

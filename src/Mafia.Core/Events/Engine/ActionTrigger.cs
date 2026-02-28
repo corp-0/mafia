@@ -5,7 +5,12 @@ using Mafia.Core.Time;
 
 namespace Mafia.Core.Events.Engine;
 
-public class ActionTrigger(IEventDefinitionRepository definitions) : IEventTriggerSource
+public interface IActionTrigger
+{
+    void OnAction(string actionId, EntityScope scope);
+}
+
+public class ActionTrigger(IEventDefinitionRepository definitions) : IActionTrigger, IEventTriggerSource
 {
     private readonly List<EventCandidate> _pending = [];
 

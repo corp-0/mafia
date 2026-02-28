@@ -904,12 +904,14 @@ public class EffectsTests : IDisposable
     {
         var scope = CreateScope();
         var entity = SpawnEntity();
-        entity.Add(new Identity("Salvatore", "Sonny", 35, Gender.Male));
+        entity.Add(new CharacterName("Salvatore", "Sonny"));
+        entity.Add(new Age { Amount = 35 });
+        entity.Add(Sex.Male);
         scope.WithAnchor("target", entity);
 
         new ChangeNickname("target", "The Bull").Apply(scope);
 
-        entity.Ref<Identity>().NickName.Should().Be("The Bull");
+        entity.Ref<CharacterName>().NickName.Should().Be("The Bull");
     }
 
     [Fact]
@@ -917,19 +919,21 @@ public class EffectsTests : IDisposable
     {
         var scope = CreateScope();
         var entity = SpawnEntity();
-        entity.Add(new Identity("Salvatore", "Sonny", 35, Gender.Male));
+        entity.Add(new CharacterName("Salvatore", "Sonny"));
+        entity.Add(new Age { Amount = 35 });
+        entity.Add(Sex.Male);
         scope.WithAnchor("target", entity);
 
         new ChangeNickname("target", "The Bull").Apply(scope);
 
-        var id = entity.Ref<Identity>();
-        id.Name.Should().Be("Salvatore");
-        id.Age.Should().Be(35);
-        id.Gender.Should().Be(Gender.Male);
+        var cn = entity.Ref<CharacterName>();
+        cn.Name.Should().Be("Salvatore");
+        entity.Ref<Age>().Amount.Should().Be(35);
+        entity.Ref<Sex>().Should().Be(Sex.Male);
     }
 
     [Fact]
-    public void ChangeNickname_NoIdentityComponent_DoesNotThrow()
+    public void ChangeNickname_NoCharacterNameComponent_DoesNotThrow()
     {
         var scope = CreateScope();
         var entity = SpawnEntity();
@@ -937,7 +941,7 @@ public class EffectsTests : IDisposable
 
         new ChangeNickname("target", "Ghost").Apply(scope);
 
-        entity.Has<Identity>().Should().BeFalse();
+        entity.Has<CharacterName>().Should().BeFalse();
     }
 
     [Fact]

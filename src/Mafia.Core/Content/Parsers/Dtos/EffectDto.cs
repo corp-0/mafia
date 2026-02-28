@@ -45,4 +45,8 @@ public class EffectDto
 
     // == ChangeNickname ==
     public string? Nickname { get; set; }
+
+    // == AddExpense ==
+    public string? Category { get; set; }
+    public string? LabelKey { get; set; }
 }
