@@ -41,7 +41,7 @@ public class EffectDto
     public string? MemoryId { get; set; }
 
     // == AddMemory ==
-    public string? ExpiresOn { get; set; }
+    public int? ExpiresInDays { get; set; }
 
     // == ChangeNickname ==
     public string? Nickname { get; set; }

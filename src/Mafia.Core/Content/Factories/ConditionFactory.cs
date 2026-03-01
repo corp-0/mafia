@@ -1,3 +1,4 @@
+using Humanizer;
 using Mafia.Core.Content.Parsers.Dtos;
 using Mafia.Core.Ecs.Components.Rank;
 using Mafia.Core.Events.Conditions;
@@ -58,5 +59,5 @@ public partial class ConditionFactory
     }
 
     private static string Normalize(string input) =>
-        input.Replace("_", "").ToLowerInvariant();
+        input.Pascalize().ToLower();
 }

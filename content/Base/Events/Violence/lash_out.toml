@@ -1,0 +1,117 @@
+id = "lash_out"
+title_key = "Seeing red"
+description_key = "The anger boils over before you can stop it. Someone's about to have a very bad day."
+trigger_type = "pulse"
+mean_time_to_happen_days = 15
+priority = 500
+cooldown_days = 30
+
+[[conditions]]
+type = "stat_threshold"
+stat = "violence_urge"
+path = "root"
+comparison = ">="
+value = 40
+
+[target_selection]
+pool = "root_crew"
+selection_mode = "random"
+
+# ── Intimidate ─────────────────────────────────
+[[options]]
+type = "standard"
+id = "intimidate"
+display_text_key = "Get in their face"
+resolution_text_key = "You grab them by the collar and make your point very clearly. They won't forget the look in your eyes."
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -10
+
+[[options.effects]]
+type = "modify_stat"
+stat = "violence_urge"
+path = "root"
+amount = 10
+
+[[options.effects]]
+type = "add_memory"
+from = "target"
+to = "root"
+memory_id = "intimidated_by"
+amount = -10
+expires_in_days = 180
+
+# ── Rough them up ─────────────────────────────
+[[options]]
+type = "standard"
+id = "rough_up"
+display_text_key = "Rough them up"
+resolution_text_key = "A shove. A slap. Nothing that leaves a mark. But the message is received."
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -18
+
+[[options.effects]]
+type = "modify_stat"
+stat = "violence_urge"
+path = "root"
+amount = 20
+
+[[options.effects]]
+type = "modify_stat"
+stat = "notoriety"
+path = "root"
+amount = 2
+
+[[options.effects]]
+type = "add_memory"
+from = "target"
+to = "root"
+memory_id = "roughed_up_by"
+amount = -25
+expires_in_days = 365
+
+# ── Beat them badly ───────────────────────────
+[[options]]
+type = "standard"
+id = "beat_badly"
+display_text_key = "Really hurt them"
+resolution_text_key = "You don't stop when you should. By the time you're done, they're on the floor and you're breathing hard. The rage is gone. For now."
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -30
+
+[[options.effects]]
+type = "modify_stat"
+stat = "violence_urge"
+path = "root"
+amount = 35
+
+[[options.effects]]
+type = "modify_stat"
+stat = "notoriety"
+path = "root"
+amount = 5
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "target"
+amount = 25
+
+[[options.effects]]
+type = "add_memory"
+from = "target"
+to = "root"
+memory_id = "beaten_by"
+amount = -50
+expires_in_days = 730

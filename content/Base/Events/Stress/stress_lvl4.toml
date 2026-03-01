@@ -1,0 +1,243 @@
+id = "stress_lvl4"
+title_key = "Cracks in the armor"
+description_key = "You flinch at shadows. You check the rearview mirror three times before pulling out. Everyone looks like they're hiding something."
+trigger_type = "pulse"
+mean_time_to_happen_days = 21
+priority = 400
+
+[[conditions]]
+type = "stat_threshold"
+stat = "stress"
+path = "root"
+comparison = ">="
+value = 65
+
+# ── Endure it ──────────────────────────────────
+[[options]]
+type = "standard"
+id = "endure"
+display_text_key = "Lock the door and sit in the dark"
+resolution_text_key = "You sit there for hours, listening to your own breathing. The paranoia doesn't leave. It just gets quieter."
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = 5
+
+[[options.effects]]
+type = "add_tag"
+tag = "paranoid"
+path = "root"
+
+# ── Drown it ───────────────────────────────────
+[[options]]
+type = "standard"
+id = "drown_it"
+display_text_key = "Drink until you can't think"
+resolution_text_key = "You black out at the kitchen table. You wake up on the floor with no memory of how you got there."
+
+[options.ai_weight]
+base = 35
+[[options.ai_weight.modifiers]]
+add = 50
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "alcoholic"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -25
+
+[[options.effects]]
+type = "modify_stat"
+stat = "drinking_urge"
+path = "root"
+amount = 30
+
+# ── Smoke nonstop ──────────────────────────────
+[[options]]
+type = "standard"
+id = "smoke_nonstop"
+display_text_key = "Light one with the last one"
+resolution_text_key = "Two packs since noon. Your chest hurts but your mind is numb."
+
+[options.ai_weight]
+base = 25
+[[options.ai_weight.modifiers]]
+add = 40
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "chain_smoker"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -12
+
+[[options.effects]]
+type = "modify_stat"
+stat = "smoking_urge"
+path = "root"
+amount = 25
+
+# ── Gamble everything ──────────────────────────
+[[options]]
+type = "random"
+id = "gamble_everything"
+display_text_key = "Put it all on the table"
+
+[options.ai_weight]
+base = 15
+[[options.ai_weight.modifiers]]
+add = 50
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "gambler"
+path = "root"
+
+[[options.outcomes]]
+weight = 35
+resolution_text_key = "You win big. Enough to forget why you came. The table cheers and for one moment you feel like a king."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -25
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 35
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = 20
+
+[[options.outcomes]]
+weight = 65
+resolution_text_key = "You lose more than you can afford. The walk home is the longest of your life."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = 12
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 25
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = -20
+
+# ── Binge ──────────────────────────────────────
+[[options]]
+type = "standard"
+id = "binge"
+display_text_key = "Order everything on the menu"
+resolution_text_key = "You eat until you're sick. Then you sit there, hating yourself a little. But the panic is gone."
+
+[options.ai_weight]
+base = 15
+[[options.ai_weight.modifiers]]
+add = 35
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "glutton"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -10
+
+[[options.effects]]
+type = "modify_stat"
+stat = "eating_urge"
+path = "root"
+amount = 22
+
+# ── Chase company ──────────────────────────────
+[[options]]
+type = "standard"
+id = "chase_company"
+display_text_key = "Lose yourself in someone else"
+resolution_text_key = "A different face every time now. You're not even looking for comfort. Just distraction."
+
+[options.ai_weight]
+base = 20
+[[options.ai_weight.modifiers]]
+add = 40
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "lustful"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -18
+
+[[options.effects]]
+type = "modify_stat"
+stat = "lust_urge"
+path = "root"
+amount = 28
+
+# ── Heavy drugs ────────────────────────────────
+[[options]]
+type = "standard"
+id = "heavy_dose"
+display_text_key = "Take something stronger"
+resolution_text_key = "You disappear for a while. When you come back, the world is softer but your hands are still shaking."
+
+[options.ai_weight]
+base = 15
+[[options.ai_weight.modifiers]]
+add = 55
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "drug_addict"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -30
+
+[[options.effects]]
+type = "modify_stat"
+stat = "high_urge"
+path = "root"
+amount = 35
+
+# ── Lash out ───────────────────────────────────
+[[options]]
+type = "standard"
+id = "lash_out"
+display_text_key = "Take it out on someone"
+resolution_text_key = "Something snaps."
+
+[options.ai_weight]
+base = 10
+[[options.ai_weight.modifiers]]
+add = 45
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "violent"
+path = "root"
+
+[[options.effects]]
+type = "trigger_event"
+event_id = "lash_out"
+path = "root"

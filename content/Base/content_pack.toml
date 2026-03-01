@@ -1,0 +1,6 @@
+id = "base_game_1"
+name = "Base Game"
+version = "1.0.0"
+author = "GillesGillespie"
+description = "The base game content pack. You need this"
+load_order = 0

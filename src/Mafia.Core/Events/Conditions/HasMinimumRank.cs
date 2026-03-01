@@ -2,6 +2,7 @@ using fennecs;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.Rank;
 using Mafia.Core.Events.Conditions.Interfaces;
+using Mafia.Core.Extensions;
 
 namespace Mafia.Core.Events.Conditions;
 

@@ -1,0 +1,155 @@
+id = "stress_lvl2"
+title_key = "Restless nights"
+description_key = "You stare at the ceiling for hours before sleep comes. Your mind won't stop running through everything that could go wrong."
+trigger_type = "pulse"
+mean_time_to_happen_days = 10
+priority = 200
+
+[[conditions]]
+type = "stat_threshold"
+stat = "stress"
+path = "root"
+comparison = ">="
+value = 25
+
+# ── Tough it out ────────────────────────────────
+[[options]]
+type = "standard"
+id = "tough_it_out"
+display_text_key = "Tough it out"
+resolution_text_key = "You lie there and take it. Sleep comes eventually. It always does."
+
+# ── Have a drink ────────────────────────────────
+[[options]]
+type = "standard"
+id = "have_a_drink"
+display_text_key = "Pour yourself a stiff one"
+resolution_text_key = "One glass becomes two. The second one finally quiets your head."
+
+[options.ai_weight]
+base = 35
+[[options.ai_weight.modifiers]]
+add = 40
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "alcoholic"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -12
+
+[[options.effects]]
+type = "modify_stat"
+stat = "drinking_urge"
+path = "root"
+amount = 20
+
+# ── Light a cigarette ──────────────────────────
+[[options]]
+type = "standard"
+id = "smoke_one"
+display_text_key = "Chain-smoke on the balcony"
+resolution_text_key = "Three cigarettes later, the night air finally feels like enough."
+
+[options.ai_weight]
+base = 30
+[[options.ai_weight.modifiers]]
+add = 35
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "chain_smoker"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -8
+
+[[options.effects]]
+type = "modify_stat"
+stat = "smoking_urge"
+path = "root"
+amount = 18
+
+# ── Eat something ──────────────────────────────
+[[options]]
+type = "standard"
+id = "comfort_food"
+display_text_key = "Raid the kitchen"
+resolution_text_key = "Half a tray of leftovers and you finally feel something other than dread."
+
+[options.ai_weight]
+base = 25
+[[options.ai_weight.modifiers]]
+add = 30
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "glutton"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -6
+
+[[options.effects]]
+type = "modify_stat"
+stat = "eating_urge"
+path = "root"
+amount = 15
+
+# ── Hit the tables ─────────────────────────────
+[[options]]
+type = "random"
+id = "gamble"
+display_text_key = "Find a late-night card game"
+
+[options.ai_weight]
+base = 20
+[[options.ai_weight.modifiers]]
+add = 45
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "gambler"
+path = "root"
+
+[[options.outcomes]]
+weight = 45
+resolution_text_key = "You clean them out. The rush is better than sleep ever was."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -14
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 25
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = 10
+
+[[options.outcomes]]
+weight = 55
+resolution_text_key = "You play until the sun comes up and leave lighter than you came. Worth it? You're not sure."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = 5
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 15
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = -10

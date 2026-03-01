@@ -6,6 +6,7 @@ using Mafia.Core.Ecs.Components.Rank;
 using Mafia.Core.Ecs.Components.State;
 using Mafia.Core.Ecs.Relations;
 using Mafia.Core.Events.Effects;
+using Mafia.Core.Extensions;
 using Xunit;
 
 namespace Mafia.Core.Tests.Context;

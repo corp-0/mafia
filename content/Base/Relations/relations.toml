@@ -1,0 +1,135 @@
+# ═══════════════════════════════════════════════
+#  Household
+# ═══════════════════════════════════════════════
+
+[member_of_household]
+title_key = "Member of Household"
+description_key = "Lives under this roof."
+
+[head_of_household]
+title_key = "Head of Household"
+description_key = "Runs the household and makes the decisions."
+
+[expense_of]
+title_key = "Expense Of"
+description_key = "A financial burden carried by the household."
+
+# ═══════════════════════════════════════════════
+#  Organization
+# ═══════════════════════════════════════════════
+
+[subordinate_of]
+title_key = "Subordinate Of"
+description_key = "Takes orders from above."
+
+[boss_of]
+title_key = "Boss Of"
+description_key = "Gives the orders around here."
+
+[owner_of]
+title_key = "Owner Of"
+description_key = "Holds ownership over the enterprise."
+
+[member_of]
+title_key = "Member Of"
+description_key = "A sworn member of the organization."
+
+# ═══════════════════════════════════════════════
+#  General
+# ═══════════════════════════════════════════════
+
+[memories_of]
+title_key = "Memories Of"
+description_key = "Carries memories involving this person."
+
+[owes]
+title_key = "Owes"
+description_key = "Has an outstanding debt to settle."
+
+# ═══════════════════════════════════════════════
+#  Family
+# ═══════════════════════════════════════════════
+
+[father_of]
+title_key = "Father Of"
+description_key = "The old man."
+
+[mother_of]
+title_key = "Mother Of"
+description_key = "The one who gave them life."
+
+[son_of]
+title_key = "Son Of"
+description_key = "His father's boy."
+
+[daughter_of]
+title_key = "Daughter Of"
+description_key = "Her father's girl."
+
+[brother_of]
+title_key = "Brother Of"
+description_key = "Blood brothers."
+
+[sister_of]
+title_key = "Sister Of"
+description_key = "Blood sisters."
+
+[husband_of]
+title_key = "Husband Of"
+description_key = "Bound by marriage."
+
+[wife_of]
+title_key = "Wife Of"
+description_key = "Bound by marriage."
+
+[uncle_of]
+title_key = "Uncle Of"
+description_key = "The family elder with stories to tell."
+
+[aunt_of]
+title_key = "Aunt Of"
+description_key = "Always watching out for the little ones."
+
+[nephew_of]
+title_key = "Nephew Of"
+description_key = "The next generation."
+
+[niece_of]
+title_key = "Niece Of"
+description_key = "The next generation."
+
+[cousin_of]
+title_key = "Cousin Of"
+description_key = "Family, one step removed."
+
+[grandfather_of]
+title_key = "Grandfather Of"
+description_key = "The patriarch who built it all."
+
+[grandmother_of]
+title_key = "Grandmother Of"
+description_key = "The matriarch who held it together."
+
+[grandson_of]
+title_key = "Grandson Of"
+description_key = "Carrying on the family name."
+
+[granddaughter_of]
+title_key = "Granddaughter Of"
+description_key = "Carrying on the family legacy."
+
+[parent_of]
+title_key = "Parent Of"
+description_key = "Raised them from nothing."
+
+[spouse_of]
+title_key = "Spouse Of"
+description_key = "Bound together, for better or worse."
+
+[half_brother_of]
+title_key = "Half Brother Of"
+description_key = "Same blood, different mothers."
+
+[half_sister_of]
+title_key = "Half Sister Of"
+description_key = "Same blood, different mothers."

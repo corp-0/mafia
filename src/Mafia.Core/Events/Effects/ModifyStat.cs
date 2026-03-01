@@ -2,6 +2,7 @@
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.Interfaces;
 using Mafia.Core.Events.Effects.Interfaces;
+using Mafia.Core.Extensions;
 using Mafia.Core.Text;
 
 namespace Mafia.Core.Events.Effects;
@@ -12,7 +13,7 @@ public class ModifyStat<TStat>(string path, int amount) : IEventEffect, IDescrib
     public void Apply(EntityScope context)
     {
         if (!context.TryNavigate(path, out Entity entity)) return;
-        entity.ModifyComponent<TStat>(s => s with { Amount = s.Amount + amount });
+        entity.ModifyComponent<TStat>(s => s with { Amount = s.Amount + amount }, true);
     }
 
     public Localizable Describe(EntityScope context)

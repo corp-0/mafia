@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://bo1of1b2yagoc"]
+
+[ext_resource type="Script" uid="uid://esf4wpk0fvaj" path="res://src/Mafia/Game.cs" id="1_en6fw"]
+
+[node name="Game" type="Node" unique_id=1611756681]
+script = ExtResource("1_en6fw")
+metadata/_custom_type_script = "uid://esf4wpk0fvaj"

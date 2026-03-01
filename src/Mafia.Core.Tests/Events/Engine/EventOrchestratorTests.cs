@@ -4,8 +4,10 @@ using Mafia.Core.Content.Registries;
 using Mafia.Core.Context;
 using Mafia.Core.Events.Conditions;
 using Mafia.Core.Events.Definition;
+using Mafia.Core.Ecs.Systems;
 using Mafia.Core.Events.Engine;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Mafia.Core.Tests.Events.Engine;
@@ -25,8 +27,8 @@ public class EventOrchestratorTests : IDisposable
         var mtthCalc =
             // FixedRandom(0.0): MTTH roll always succeeds, AI picks first option
             new MtthCalculator(new FixedRandom(0.0));
-        _aiResolver = new AiEventResolver(new FixedRandom(0.0));
-        _orchestrator = new EventOrchestrator(_repo, _queue, mtthCalc, _aiResolver, _history);
+        _aiResolver = new AiEventResolver(NullLogger<AiEventResolver>.Instance, new FixedRandom(0.0));
+        _orchestrator = new EventOrchestrator(_repo, _queue, mtthCalc, _aiResolver, _history, new TargetPoolResolver(), NullLogger<EventOrchestrator>.Instance);
         _orchestrator.RegisterTriggerSource(_source);
     }
 
@@ -243,7 +245,7 @@ public class EventOrchestratorTests : IDisposable
     {
         // Use a calculator that always fails the roll
         var failCalc = new MtthCalculator(new FixedRandom(0.999));
-        var orchestrator = new EventOrchestrator(_repo, new EventQueue(), failCalc, _aiResolver, _history);
+        var orchestrator = new EventOrchestrator(_repo, new EventQueue(), failCalc, _aiResolver, _history, new TargetPoolResolver(), NullLogger<EventOrchestrator>.Instance);
         var source = new ListTriggerSource();
         orchestrator.RegisterTriggerSource(source);
 
@@ -424,7 +426,7 @@ public class EventOrchestratorTests : IDisposable
         // Even with a "never rolls" MTTH calculator, action events should pass
         var neverRollCalc = new MtthCalculator(new FixedRandom(0.999));
         var queue = new EventQueue();
-        var orchestrator = new EventOrchestrator(_repo, queue, neverRollCalc, _aiResolver, _history);
+        var orchestrator = new EventOrchestrator(_repo, queue, neverRollCalc, _aiResolver, _history, new TargetPoolResolver(), NullLogger<EventOrchestrator>.Instance);
         var source = new ListTriggerSource();
         orchestrator.RegisterTriggerSource(source);
 

@@ -3,11 +3,14 @@ using fennecs;
 using Mafia.Core.Content.Registries;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.State;
+using Mafia.Core.Ecs.Components.Tags;
 using Mafia.Core.Ecs.Relations;
+using Mafia.Core.Ecs.Systems;
 using Mafia.Core.Events.Conditions.Interfaces;
 using Mafia.Core.Events.Definition;
 using Mafia.Core.Events.Engine;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Mafia.Core.Tests.Events.Engine;
@@ -72,7 +75,7 @@ public class PulseTriggerTests : IDisposable
         _repo.Register(def);
 
         // Use bucketCount=1 so all entities are processed every tick
-        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, bucketCount: 1);
+        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, NullLogger<PulseTrigger>.Instance, bucketCount: 1);
 
         var candidates = trigger.GetCandidates(_date).ToList();
 
@@ -94,7 +97,7 @@ public class PulseTriggerTests : IDisposable
         var def = MakePulseDef();
         _repo.Register(def);
 
-        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, bucketCount: 5);
+        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, NullLogger<PulseTrigger>.Instance, bucketCount: 5);
 
         // Each tick should process roughly 20/5 = 4 entities
         var candidates = trigger.GetCandidates(_date).ToList();
@@ -133,7 +136,7 @@ public class PulseTriggerTests : IDisposable
         });
         _repo.Register(def);
 
-        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, bucketCount: 1);
+        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, NullLogger<PulseTrigger>.Instance, bucketCount: 1);
         var candidates = trigger.GetCandidates(_date).ToList();
 
         // Boss should produce a candidate with a target anchor
@@ -164,7 +167,7 @@ public class PulseTriggerTests : IDisposable
         });
         _repo.Register(def);
 
-        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, bucketCount: 1);
+        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, NullLogger<PulseTrigger>.Instance, bucketCount: 1);
         var candidates = trigger.GetCandidates(_date).ToList();
 
         var vitoCandidates = candidates
@@ -199,7 +202,7 @@ public class PulseTriggerTests : IDisposable
         });
         _repo.Register(def);
 
-        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, bucketCount: 1);
+        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, NullLogger<PulseTrigger>.Instance, bucketCount: 1);
         var candidates = trigger.GetCandidates(_date).ToList();
 
         var bossCandidates = candidates
@@ -223,7 +226,7 @@ public class PulseTriggerTests : IDisposable
         });
         _repo.Register(def);
 
-        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, bucketCount: 1);
+        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, NullLogger<PulseTrigger>.Instance, bucketCount: 1);
         var candidates = trigger.GetCandidates(_date).ToList();
 
         candidates.Should().BeEmpty();
@@ -237,7 +240,7 @@ public class PulseTriggerTests : IDisposable
         var def = MakePulseDef();
         _repo.Register(def);
 
-        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, bucketCount: 1);
+        var trigger = new PulseTrigger(_repo, _world, _history, _poolResolver, NullLogger<PulseTrigger>.Instance, bucketCount: 1);
         var candidates = trigger.GetCandidates(_date).ToList();
 
         candidates.Should().HaveCount(1);

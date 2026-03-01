@@ -1,0 +1,91 @@
+# ═══════════════════════════════════════════════
+#  Vices
+# ═══════════════════════════════════════════════
+
+[chain_smoker]
+title_key = "Chain Smoker"
+description_key = "Can't go a day without lighting up."
+
+[alcoholic]
+title_key = "Alcoholic"
+description_key = "Drinks far more than is good for them."
+
+[drug_addict]
+title_key = "Drug Addict"
+description_key = "Hooked on the hard stuff."
+
+[gambler]
+title_key = "Gambler"
+description_key = "Can't resist a bet, no matter the odds."
+
+[glutton]
+title_key = "Glutton"
+description_key = "Lives to eat, not the other way around."
+
+# ═══════════════════════════════════════════════
+#  Behavioural
+# ═══════════════════════════════════════════════
+
+[paranoid]
+title_key = "Paranoid"
+description_key = "Sees enemies around every corner."
+
+[reckless]
+title_key = "Reckless"
+description_key = "Acts first, thinks never."
+
+[violent]
+title_key = "Violent"
+description_key = "Quick to settle things with fists, or worse."
+
+[trigger_happy]
+title_key = "Trigger Happy"
+description_key = "Reaches for a gun before reaching for words."
+
+[insomniac]
+title_key = "Insomniac"
+description_key = "Sleepless nights make for restless days."
+
+[compulsive_liar]
+title_key = "Compulsive Liar"
+description_key = "Wouldn't tell the truth if their life depended on it."
+
+[greedy]
+title_key = "Greedy"
+description_key = "Never has enough, and always wants more."
+
+# ═══════════════════════════════════════════════
+#  Betrayal
+# ═══════════════════════════════════════════════
+
+[snitch]
+title_key = "Snitch"
+description_key = "Can't keep his fucking mouth shut."
+
+[skimmer]
+title_key = "Skimmer"
+description_key = "Quietly pocketing more than their share."
+
+# ═══════════════════════════════════════════════
+#  Domestic
+# ═══════════════════════════════════════════════
+
+[wife_beater]
+title_key = "Wife Beater"
+description_key = "A man of honor protects his family. This one isn't one."
+
+[womanizer]
+title_key = "Womanizer"
+description_key = "Can't keep their eyes, or hands, to themselves."
+
+# ═══════════════════════════════════════════════
+#  Roles
+# ═══════════════════════════════════════════════
+
+[underboss]
+title_key = "Underboss"
+description_key = "Second-in-command of the family."
+
+[consigliere]
+title_key = "Consigliere"
+description_key = "The boss's most trusted advisor."

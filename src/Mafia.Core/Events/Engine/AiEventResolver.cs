@@ -1,18 +1,15 @@
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.Attributes;
 using Mafia.Core.Events.Definition;
-using Mafia.Core.Events.Effects.Interfaces;
+using Mafia.Core.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Mafia.Core.Events.Engine;
 
-public class AiEventResolver
+public class AiEventResolver(ILogger<AiEventResolver> logger, Random? random = null)
 {
-    private readonly Random _random;
-
-    public AiEventResolver(Random? random = null)
-    {
-        _random = random ?? Random.Shared;
-    }
+    private readonly Random _random = random ?? Random.Shared;
+    private readonly ILogger<AiEventResolver> _logger = logger;
 
     public void Resolve(EventDefinition definition, EntityScope scope)
     {

@@ -1,0 +1,155 @@
+id = "stress_lvl1"
+title_key = "The pressure is building"
+description_key = "You notice your jaw is tired when you wake up. People are getting on your nerves more than they should."
+trigger_type = "pulse"
+mean_time_to_happen_days = 7
+priority = 100
+
+[[conditions]]
+type = "stat_threshold"
+stat = "stress"
+path = "root"
+comparison = ">="
+value = 10
+
+# ── Do nothing ──────────────────────────────────
+[[options]]
+type = "standard"
+id = "shrug_it_off"
+display_text_key = "Shake it off"
+resolution_text_key = "You push through. It's nothing you can't handle."
+
+# ── Have a drink ────────────────────────────────
+[[options]]
+type = "standard"
+id = "have_a_drink"
+display_text_key = "A drink might help"
+resolution_text_key = "A glass of whiskey takes the edge off. You feel the tension melt away."
+
+[options.ai_weight]
+base = 30
+[[options.ai_weight.modifiers]]
+add = 40
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "alcoholic"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -8
+
+[[options.effects]]
+type = "modify_stat"
+stat = "drinking_urge"
+path = "root"
+amount = 15
+
+# ── Light a cigarette ──────────────────────────
+[[options]]
+type = "standard"
+id = "smoke_one"
+display_text_key = "Step out for a smoke"
+resolution_text_key = "The first drag quiets the noise in your head. Just a little."
+
+[options.ai_weight]
+base = 25
+[[options.ai_weight.modifiers]]
+add = 35
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "chain_smoker"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -5
+
+[[options.effects]]
+type = "modify_stat"
+stat = "smoking_urge"
+path = "root"
+amount = 12
+
+# ── Eat something ──────────────────────────────
+[[options]]
+type = "standard"
+id = "comfort_food"
+display_text_key = "Grab a bite to eat"
+resolution_text_key = "You grab a cannoli and a coffee. Simple comforts."
+
+[options.ai_weight]
+base = 25
+[[options.ai_weight.modifiers]]
+add = 30
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "glutton"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -4
+
+[[options.effects]]
+type = "modify_stat"
+stat = "eating_urge"
+path = "root"
+amount = 10
+
+# ── Hit the tables ─────────────────────────────
+[[options]]
+type = "random"
+id = "gamble"
+display_text_key = "Head to the card game"
+
+[options.ai_weight]
+base = 15
+[[options.ai_weight.modifiers]]
+add = 45
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "gambler"
+path = "root"
+
+[[options.outcomes]]
+weight = 50
+resolution_text_key = "You walk away up a few bucks. Not bad for a Tuesday night."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -8
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 20
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = 5
+
+[[options.outcomes]]
+weight = 50
+resolution_text_key = "You lose a little. Nothing you can't afford. But it stings."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = 3
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 10
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = -5

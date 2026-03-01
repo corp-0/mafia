@@ -5,6 +5,7 @@ using Mafia.Core.Ecs.Components.Attributes;
 using Mafia.Core.Events.Definition;
 using Mafia.Core.Events.Effects.Interfaces;
 using Mafia.Core.Events.Engine;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Mafia.Core.Tests.Events.Engine;
@@ -87,7 +88,7 @@ public class AiEventResolverTests : IDisposable
     public void Resolve_SelectsFromVisibleOptions()
     {
         // Fixed random always returns 0, so picks the first option
-        var resolver = new AiEventResolver(new FixedRandom(0.0));
+        var resolver = new AiEventResolver(NullLogger<AiEventResolver>.Instance, new FixedRandom(0.0));
         var tracker = new EffectTracker();
         var scope = CreateScopeWithRoot();
 
@@ -118,7 +119,7 @@ public class AiEventResolverTests : IDisposable
     [Fact]
     public void Resolve_AllZeroWeight_NoEffectsApplied()
     {
-        var resolver = new AiEventResolver(new FixedRandom(0.0));
+        var resolver = new AiEventResolver(NullLogger<AiEventResolver>.Instance, new FixedRandom(0.0));
         var tracker = new EffectTracker();
         var scope = CreateScopeWithRoot();
 
@@ -152,7 +153,7 @@ public class AiEventResolverTests : IDisposable
     [Fact]
     public void ApplyOptionOutcome_Standard_AppliesEffects()
     {
-        var resolver = new AiEventResolver();
+        var resolver = new AiEventResolver(NullLogger<AiEventResolver>.Instance);
         var tracker = new EffectTracker();
         var scope = CreateScopeWithRoot();
 
@@ -178,7 +179,7 @@ public class AiEventResolverTests : IDisposable
     {
         // FixedRandom: Next(1,7) returns 1, so 2d6 = 1+1 = 2. With muscle=5, total=7.
         // Difficulty 7 → success (>= 7)
-        var resolver = new AiEventResolver(new FixedRandom(0.0));
+        var resolver = new AiEventResolver(NullLogger<AiEventResolver>.Instance, new FixedRandom(0.0));
         var successTracker = new EffectTracker();
         var failTracker = new EffectTracker();
         var scope = CreateScopeWithRoot();
@@ -206,7 +207,7 @@ public class AiEventResolverTests : IDisposable
     {
         // FixedRandom: 2d6 = 1+1 = 2. muscle=5, total=7.
         // Difficulty 8 → failure (7 < 8)
-        var resolver = new AiEventResolver(new FixedRandom(0.0));
+        var resolver = new AiEventResolver(NullLogger<AiEventResolver>.Instance, new FixedRandom(0.0));
         var successTracker = new EffectTracker();
         var failTracker = new EffectTracker();
         var scope = CreateScopeWithRoot();
@@ -237,7 +238,7 @@ public class AiEventResolverTests : IDisposable
     public void ApplyOptionOutcome_Random_SelectsWeightedOutcome()
     {
         // FixedRandom: Next(totalWeight) returns 0 → first outcome
-        var resolver = new AiEventResolver(new FixedRandom(0.0));
+        var resolver = new AiEventResolver(NullLogger<AiEventResolver>.Instance, new FixedRandom(0.0));
         var tracker1 = new EffectTracker();
         var tracker2 = new EffectTracker();
         var scope = CreateScopeWithRoot();

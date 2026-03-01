@@ -7,6 +7,7 @@ using Mafia.Core.Ecs.Components.Rank;
 using Mafia.Core.Ecs.Components.State;
 using Mafia.Core.Ecs.Relations;
 using Mafia.Core.Events.Effects;
+using Mafia.Core.Extensions;
 using Xunit;
 
 namespace Mafia.Core.Tests.Events.Effects;
@@ -223,7 +224,7 @@ public class EffectsTests : IDisposable
     }
 
     [Fact]
-    public void ModifyStat_MissingStat_DoesNotThrow()
+    public void ModifyStat_MissingStat_AddsComponent()
     {
         var scope = CreateScope();
         var entity = SpawnEntity();
@@ -231,7 +232,8 @@ public class EffectsTests : IDisposable
 
         new ModifyStat<Muscle>("target", 5).Apply(scope);
 
-        entity.GetComponent<Muscle>().Should().BeNull();
+        entity.GetComponent<Muscle>().Should().NotBeNull();
+        entity.GetComponent<Muscle>()!.Value.Amount.Should().Be(5);
     }
 
     [Fact]
@@ -506,9 +508,7 @@ public class EffectsTests : IDisposable
         var evaluator = SpawnEntity();
         var target = SpawnEntity();
         scope.WithAnchor("root", evaluator).WithAnchor("target", target);
-        var memory = new OpinionMemory { DefinitionId = "betrayed_me", Amount = -30, ExpiresOn = new GameDate(1930, 6, 1) };
-
-        new AddMemory("root", "target", memory).Apply(scope);
+        new AddMemory("root", "target", "betrayed_me", -30, 180).Apply(scope);
 
         evaluator.Has<MemoriesOf>(target).Should().BeTrue();
         var memories = evaluator.Ref<MemoriesOf>(target).Memories;
@@ -525,8 +525,8 @@ public class EffectsTests : IDisposable
         var target = SpawnEntity();
         scope.WithAnchor("root", evaluator).WithAnchor("target", target);
 
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "betrayed_me", Amount = -30, ExpiresOn = new GameDate(1930, 6, 1) }).Apply(scope);
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "saved_my_life", Amount = 40, ExpiresOn = new GameDate(1932, 1, 1) }).Apply(scope);
+        new AddMemory("root", "target", "betrayed_me", -30, 365).Apply(scope);
+        new AddMemory("root", "target", "saved_my_life", 40, 365).Apply(scope);
 
         var memories = evaluator.Ref<MemoriesOf>(target).Memories;
         memories.Count.Should().Be(2);
@@ -541,10 +541,10 @@ public class EffectsTests : IDisposable
         var targetB = SpawnEntity();
         scope.WithAnchor("root", evaluator).WithAnchor("target", targetA);
 
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "grudge", Amount = -50, ExpiresOn = new GameDate(1930, 1, 1) }).Apply(scope);
+        new AddMemory("root", "target", "grudge", -50, 365).Apply(scope);
 
         scope.WithAnchor("target", targetB);
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "favor", Amount = 20, ExpiresOn = new GameDate(1931, 1, 1) }).Apply(scope);
+        new AddMemory("root", "target", "favor", 20, 365).Apply(scope);
 
         evaluator.Ref<MemoriesOf>(targetA).Memories.Should().HaveCount(1);
         evaluator.Ref<MemoriesOf>(targetB).Memories.Should().HaveCount(1);
@@ -557,7 +557,7 @@ public class EffectsTests : IDisposable
         var target = SpawnEntity();
         scope.WithAnchor("target", target);
 
-        new AddMemory("nobody", "target", new OpinionMemory { DefinitionId = "x", Amount = 1, ExpiresOn = new GameDate(1930, 1, 1) }).Apply(scope);
+        new AddMemory("nobody", "target", "x", 1, 365).Apply(scope);
     }
 
     [Fact]
@@ -567,7 +567,7 @@ public class EffectsTests : IDisposable
         var evaluator = SpawnEntity();
         scope.WithAnchor("root", evaluator);
 
-        new AddMemory("root", "nobody", new OpinionMemory { DefinitionId = "x", Amount = 1, ExpiresOn = new GameDate(1930, 1, 1) }).Apply(scope);
+        new AddMemory("root", "nobody", "x", 1, 365).Apply(scope);
 
         evaluator.Has<MemoriesOf>().Should().BeFalse();
     }
@@ -778,8 +778,8 @@ public class EffectsTests : IDisposable
         var target = SpawnEntity();
         scope.WithAnchor("root", evaluator).WithAnchor("target", target);
 
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "betrayed_me", Amount = -30, ExpiresOn = new GameDate(1930, 6, 1) }).Apply(scope);
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "saved_my_life", Amount = 40, ExpiresOn = new GameDate(1932, 1, 1) }).Apply(scope);
+        new AddMemory("root", "target", "betrayed_me", -30, 365).Apply(scope);
+        new AddMemory("root", "target", "saved_my_life", 40, 365).Apply(scope);
 
         new RemoveMemory("root", "target", "betrayed_me").Apply(scope);
 
@@ -796,8 +796,8 @@ public class EffectsTests : IDisposable
         var target = SpawnEntity();
         scope.WithAnchor("root", evaluator).WithAnchor("target", target);
 
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "grudge", Amount = -10, ExpiresOn = new GameDate(1930, 1, 1) }).Apply(scope);
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "grudge", Amount = -20, ExpiresOn = new GameDate(1931, 1, 1) }).Apply(scope);
+        new AddMemory("root", "target", "grudge", -10, 365).Apply(scope);
+        new AddMemory("root", "target", "grudge", -20, 365).Apply(scope);
 
         new RemoveMemory("root", "target", "grudge").Apply(scope);
 
@@ -812,7 +812,7 @@ public class EffectsTests : IDisposable
         var target = SpawnEntity();
         scope.WithAnchor("root", evaluator).WithAnchor("target", target);
 
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "favor", Amount = 20, ExpiresOn = new GameDate(1930, 1, 1) }).Apply(scope);
+        new AddMemory("root", "target", "favor", 20, 365).Apply(scope);
 
         new RemoveMemory("root", "target", "nonexistent").Apply(scope);
 
@@ -850,8 +850,8 @@ public class EffectsTests : IDisposable
         var target = SpawnEntity();
         scope.WithAnchor("root", evaluator).WithAnchor("target", target);
 
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "a", Amount = -10, ExpiresOn = new GameDate(1930, 1, 1) }).Apply(scope);
-        new AddMemory("root", "target", new OpinionMemory { DefinitionId = "b", Amount = 20, ExpiresOn = new GameDate(1931, 1, 1) }).Apply(scope);
+        new AddMemory("root", "target", "a", -10, 365).Apply(scope);
+        new AddMemory("root", "target", "b", 20, 365).Apply(scope);
 
         new ClearMemories("root", "target").Apply(scope);
 
@@ -867,8 +867,8 @@ public class EffectsTests : IDisposable
         var targetB = SpawnEntity();
         scope.WithAnchor("root", evaluator).WithAnchor("a", targetA).WithAnchor("b", targetB);
 
-        new AddMemory("root", "a", new OpinionMemory { DefinitionId = "x", Amount = -10, ExpiresOn = new GameDate(1930, 1, 1) }).Apply(scope);
-        new AddMemory("root", "b", new OpinionMemory { DefinitionId = "y", Amount = 20, ExpiresOn = new GameDate(1930, 1, 1) }).Apply(scope);
+        new AddMemory("root", "a", "x", -10, 365).Apply(scope);
+        new AddMemory("root", "b", "y", 20, 365).Apply(scope);
 
         new ClearMemories("root", "a").Apply(scope);
 

@@ -1,0 +1,244 @@
+id = "stress_lvl5"
+title_key = "Breaking point"
+description_key = "You catch yourself talking to no one. Your hands won't stop shaking. You can't remember the last time you slept through the night. Something is about to snap."
+trigger_type = "pulse"
+mean_time_to_happen_days = 30
+priority = 500
+
+[[conditions]]
+type = "stat_threshold"
+stat = "stress"
+path = "root"
+comparison = ">="
+value = 85
+
+# ── Suffer through it ─────────────────────────
+[[options]]
+type = "standard"
+id = "suffer"
+display_text_key = "Try to hold it together"
+resolution_text_key = "You grip the edge of the sink and stare at your reflection. The man looking back is someone you don't recognize."
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = 8
+
+[[options.effects]]
+type = "modify_stat"
+stat = "violence_urge"
+path = "root"
+amount = 10
+
+# ── Blackout drinking ─────────────────────────
+[[options]]
+type = "standard"
+id = "blackout"
+display_text_key = "Empty the bottle"
+resolution_text_key = "You come to on the bathroom floor. There's a bruise on your head you don't remember getting. But the screaming inside stopped."
+
+[options.ai_weight]
+base = 35
+[[options.ai_weight.modifiers]]
+add = 55
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "alcoholic"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -30
+
+[[options.effects]]
+type = "modify_stat"
+stat = "drinking_urge"
+path = "root"
+amount = 35
+
+# ── Burn through smokes ───────────────────────
+[[options]]
+type = "standard"
+id = "burn_through"
+display_text_key = "Smoke until your lungs give out"
+resolution_text_key = "You cough blood into the sink. You light another one anyway."
+
+[options.ai_weight]
+base = 25
+[[options.ai_weight.modifiers]]
+add = 45
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "chain_smoker"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -15
+
+[[options.effects]]
+type = "modify_stat"
+stat = "smoking_urge"
+path = "root"
+amount = 30
+
+# ── Desperate bet ──────────────────────────────
+[[options]]
+type = "random"
+id = "desperate_bet"
+display_text_key = "Bet money you don't have"
+
+[options.ai_weight]
+base = 15
+[[options.ai_weight.modifiers]]
+add = 50
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "gambler"
+path = "root"
+
+[[options.outcomes]]
+weight = 30
+resolution_text_key = "Against all odds, you hit. The pile of cash in front of you doesn't feel real. Nothing does anymore."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -30
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 40
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = 30
+
+[[options.outcomes]]
+weight = 70
+resolution_text_key = "You owe people now. Dangerous people. The kind who don't send reminders."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = 20
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 30
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = -30
+
+# ── Eat yourself sick ─────────────────────────
+[[options]]
+type = "standard"
+id = "eat_sick"
+display_text_key = "Eat until you're sick"
+resolution_text_key = "You empty the fridge, then the pantry. Your body begs you to stop but your hands keep going."
+
+[options.ai_weight]
+base = 15
+[[options.ai_weight.modifiers]]
+add = 35
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "glutton"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -12
+
+[[options.effects]]
+type = "modify_stat"
+stat = "eating_urge"
+path = "root"
+amount = 25
+
+# ── Compulsive company ────────────────────────
+[[options]]
+type = "standard"
+id = "compulsive_company"
+display_text_key = "Anyone. You just need anyone."
+resolution_text_key = "It doesn't mean anything and you both know it. You pay and she leaves and the apartment feels emptier than before."
+
+[options.ai_weight]
+base = 20
+[[options.ai_weight.modifiers]]
+add = 45
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "lustful"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -22
+
+[[options.effects]]
+type = "modify_stat"
+stat = "lust_urge"
+path = "root"
+amount = 32
+
+# ── Overdose territory ────────────────────────
+[[options]]
+type = "standard"
+id = "overdose_territory"
+display_text_key = "Take too much"
+resolution_text_key = "You take more than you should. Way more. The ceiling melts and time stops and for one perfect moment nothing hurts."
+
+[options.ai_weight]
+base = 15
+[[options.ai_weight.modifiers]]
+add = 60
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "drug_addict"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -40
+
+[[options.effects]]
+type = "modify_stat"
+stat = "high_urge"
+path = "root"
+amount = 40
+
+# ── Explode ───────────────────────────────────
+[[options]]
+type = "standard"
+id = "explode"
+display_text_key = "Hurt someone. Badly."
+resolution_text_key = "Something snaps. Completely."
+
+[options.ai_weight]
+base = 10
+[[options.ai_weight.modifiers]]
+add = 50
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "violent"
+path = "root"
+
+[[options.effects]]
+type = "trigger_event"
+event_id = "lash_out"
+path = "root"

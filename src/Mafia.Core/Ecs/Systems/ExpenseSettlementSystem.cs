@@ -6,10 +6,11 @@ using Mafia.Core.Events.Effects;
 using Mafia.Core.Events.Engine;
 using Mafia.Core.Text;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging;
 
 namespace Mafia.Core.Ecs.Systems;
 
-public class ExpenseSettlementSystem(World world) : ITickSystem
+public class ExpenseSettlementSystem(World world, ILogger<ExpenseSettlementSystem> logger) : ITickSystem
 {
     public void Tick(GameDate currentDate, IActionTrigger actionTrigger)
     {

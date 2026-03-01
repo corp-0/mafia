@@ -2,9 +2,12 @@ using fennecs;
 using Mafia.Core.Content.Registries;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.State;
+using Mafia.Core.Ecs.Components.Tags;
 using Mafia.Core.Ecs.Relations;
+using Mafia.Core.Ecs.Systems;
 using Mafia.Core.Events.Definition;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging;
 
 namespace Mafia.Core.Events.Engine;
 
@@ -13,6 +16,7 @@ public class PulseTrigger(
     World world,
     IEventHistory history,
     TargetPoolResolver poolResolver,
+    ILogger<PulseTrigger> logger,
     int bucketCount = 10) : IEventTriggerSource
 {
     private readonly Stream<Character> _aliveCharacters =
@@ -49,7 +53,7 @@ public class PulseTrigger(
 
                 if (def.TargetSelection is { } selection)
                 {
-                    var target = ResolveTarget(selection, entity, scope);
+                    var target = poolResolver.ResolveTarget(selection, entity, scope);
                     if (target is null)
                         continue;
 
@@ -61,40 +65,5 @@ public class PulseTrigger(
         }
 
         return candidates;
-    }
-
-    private Entity? ResolveTarget(TargetSelection selection, Entity root, EntityScope scope)
-    {
-        var pool = poolResolver.Resolve(selection.Pool, root);
-        if (pool is null || pool.Count == 0)
-            return null;
-
-        if (selection.Filter is { } filter)
-        {
-            var filtered = new List<Entity>();
-            foreach (Entity candidate in pool)
-            {
-                var tempScope = new EntityScope(world)
-                {
-                    CurrentDate = scope.CurrentDate,
-                    EventHistory = scope.EventHistory
-                };
-                tempScope.WithAnchor("root", candidate);
-
-                if (filter.Evaluate(tempScope))
-                    filtered.Add(candidate);
-            }
-
-            pool = filtered;
-        }
-
-        if (pool.Count == 0)
-            return null;
-
-        return selection.SelectionMode switch
-        {
-            "random" => pool[Random.Shared.Next(pool.Count)],
-            _ => pool[0]
-        };
     }
 }

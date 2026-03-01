@@ -1,7 +1,7 @@
 using fennecs;
 using Mafia.Core.Ecs.Relations.Interfaces;
 
-namespace Mafia.Core.Context;
+namespace Mafia.Core.Extensions;
 
 public static class EntityExtensions
 {
@@ -25,9 +25,15 @@ public static class EntityExtensions
         return true;
     }
 
-    public static bool ModifyComponent<T>(this Entity entity, Func<T, T> transform) where T : struct
+    public static bool ModifyComponent<T>(this Entity entity, Func<T, T> transform, bool addIfMissing = false) where T : struct
     {
-        if (!entity.Has<T>()) return false;
+        if (!entity.Has<T>())
+        {
+            if (addIfMissing)
+                entity.TryAddComponent<T>();
+            else return false;
+        }
+        
         entity.Ref<T>() = transform(entity.Ref<T>());
         return true;
     }

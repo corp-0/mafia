@@ -2,6 +2,7 @@ using fennecs;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Relations.Interfaces;
 using Mafia.Core.Events.Effects.Interfaces;
+using Mafia.Core.Extensions;
 using Mafia.Core.Text;
 
 namespace Mafia.Core.Events.Effects;

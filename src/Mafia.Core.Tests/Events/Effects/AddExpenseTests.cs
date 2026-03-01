@@ -2,6 +2,7 @@ using fennecs;
 using FluentAssertions;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.State;
+using Mafia.Core.Ecs.Components.Tags;
 using Mafia.Core.Ecs.Relations;
 using Mafia.Core.Events.Effects;
 using Mafia.Core.Text;

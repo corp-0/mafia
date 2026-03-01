@@ -123,7 +123,7 @@ public class EffectFactoryTests
         var dto = new EffectDto
         {
             Type = "add_memory", From = "root", To = "target",
-            MemoryId = "betrayal", Amount = -20, ExpiresOn = "1930-06-15"
+            MemoryId = "betrayal", Amount = -20, ExpiresInDays = 180
         };
         var effect = EffectFactory.Create(dto);
         effect.Should().BeOfType<AddMemory>();

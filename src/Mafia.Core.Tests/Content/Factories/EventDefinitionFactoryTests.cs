@@ -101,7 +101,7 @@ public class EventDefinitionFactoryTests
         dto.TriggerType = "telekinesis";
 
         var act = () => EventDefinitionFactory.Create(dto);
-        act.Should().Throw<ArgumentException>().WithMessage("*Unknown trigger type*");
+        act.Should().Throw<ArgumentException>().WithMessage("*Unknown TriggerType*");
     }
 
     // ═══════════════════════════════════════════════
@@ -126,7 +126,6 @@ public class EventDefinitionFactoryTests
     [InlineData(null, ScopeType.Character)]
     [InlineData("character", ScopeType.Character)]
     [InlineData("location", ScopeType.Location)]
-    [InlineData("territory", ScopeType.Location)]
     [InlineData("relationship", ScopeType.Relationship)]
     [InlineData("global", ScopeType.Global)]
     public void Create_ScopeType_MapsCorrectly(string? input, ScopeType expected)
@@ -289,7 +288,7 @@ public class EventDefinitionFactoryTests
         dto.Options = [new OptionDto { Type = "telepathy", Id = "x", DisplayTextKey = "x", Outcome = new() }];
 
         var act = () => EventDefinitionFactory.Create(dto);
-        act.Should().Throw<ArgumentException>().WithMessage("*Unknown option type*");
+        act.Should().Throw<ArgumentException>().WithMessage("*Unknown OptionType*");
     }
 
     [Fact]

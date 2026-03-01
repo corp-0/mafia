@@ -12,6 +12,21 @@ public enum ScopeType
     Global
 }
 
+public enum TriggerType
+{
+    Chained,
+    Pulse,
+    OnAction,
+    StoryBeat,
+}
+
+public enum OptionType
+{
+    Standard,
+    SkillCheck,
+    Random,
+}
+
 public enum EventPresentation
 {
     /// <summary>Pauses the simulation and forces the player to respond.</summary>
@@ -64,6 +79,12 @@ public abstract class EventDefinition
     public EventPresentation Presentation { get; init; } = EventPresentation.Popup;
 
     /// <summary>
+    /// How the trigger source should find the "target" entity.
+    /// Null if no target is needed.
+    /// </summary>
+    public TargetSelection? TargetSelection { get; init; }
+
+    /// <summary>
     /// Returns the subset of options whose visibility conditions pass in the given scope.
     /// </summary>
     public List<EventOptionDefinition> GetVisibleOptions(EntityScope scope)
@@ -96,11 +117,6 @@ public class PulseEventDefinition: EventDefinition
     /// </summary>
     public IReadOnlyList<MtthModifier> MtthModifiers { get; init; } = [];
     
-    /// <summary>
-    /// How the trigger source should find the "target" entity.
-    /// Null if no target is needed.
-    /// </summary>
-    public TargetSelection? TargetSelection { get; init; }
 }
 
 /// <summary>

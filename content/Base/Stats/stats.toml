@@ -1,0 +1,47 @@
+# ═══════════════════════════════════════════════
+#  Attributes
+# ═══════════════════════════════════════════════
+
+[muscle]
+title_key = "Muscle"
+description_key = "Raw physical strength and toughness."
+
+[nerve]
+title_key = "Nerve"
+description_key = "Composure under pressure. The toughness of the mind."
+
+[brains]
+title_key = "Brains"
+description_key = "Sharp intellect and cunning. The vision to plan three steps ahead."
+
+[charm]
+title_key = "Charm"
+description_key = "Personal magnetism and style. The aura that makes people want to listen.."
+
+[instinct]
+title_key = "Instinct"
+description_key = "Gut feeling and survival reflexes."
+
+# ═══════════════════════════════════════════════
+#  Identity
+# ═══════════════════════════════════════════════
+
+[age]
+title_key = "Age"
+description_key = ""
+
+# ═══════════════════════════════════════════════
+#  Meters
+# ═══════════════════════════════════════════════
+
+[wealth]
+title_key = "Wealth"
+description_key = "How much cash they have to their name."
+
+[stress]
+title_key = "Stress"
+description_key = "The weight of the life you've chosen. Too much pressure leads to fatal mistakes."
+
+[notoriety]
+title_key = "Notoriety"
+description_key = "How well-known they are on the streets. Good for respect, bad for attracting the law."

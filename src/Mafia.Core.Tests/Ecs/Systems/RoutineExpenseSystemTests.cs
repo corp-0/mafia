@@ -1,10 +1,12 @@
 using fennecs;
 using FluentAssertions;
 using Mafia.Core.Ecs.Components.State;
+using Mafia.Core.Ecs.Components.Tags;
 using Mafia.Core.Ecs.Relations;
 using Mafia.Core.Ecs.Systems;
 using Mafia.Core.Tests.Events.Engine;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Mafia.Core.Tests.Ecs.Systems;
@@ -49,7 +51,7 @@ public class RoutineExpenseSystemTests : IDisposable
     {
         var household = CreateHouseholdWithMembers(1);
 
-        var system = new RoutineExpenseSystem(_world);
+        var system = new RoutineExpenseSystem(_world, NullLogger<RoutineExpenseSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 15), _trigger);
 
         var expenses = GetExpensesFor(household);
@@ -64,7 +66,7 @@ public class RoutineExpenseSystemTests : IDisposable
     {
         var household = CreateHouseholdWithMembers(3);
 
-        var system = new RoutineExpenseSystem(_world);
+        var system = new RoutineExpenseSystem(_world, NullLogger<RoutineExpenseSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 15), _trigger);
 
         var expenses = GetExpensesFor(household);
@@ -78,7 +80,7 @@ public class RoutineExpenseSystemTests : IDisposable
     {
         CreateHouseholdWithMembers(2);
 
-        var system = new RoutineExpenseSystem(_world);
+        var system = new RoutineExpenseSystem(_world, NullLogger<RoutineExpenseSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 1), _trigger);
 
         var stream = _world.Query<Expense>().Stream();
@@ -93,7 +95,7 @@ public class RoutineExpenseSystemTests : IDisposable
         var h1 = CreateHouseholdWithMembers(1);
         var h2 = CreateHouseholdWithMembers(2);
 
-        var system = new RoutineExpenseSystem(_world);
+        var system = new RoutineExpenseSystem(_world, NullLogger<RoutineExpenseSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 15), _trigger);
 
         GetExpensesFor(h1).Should().HaveCount(3);

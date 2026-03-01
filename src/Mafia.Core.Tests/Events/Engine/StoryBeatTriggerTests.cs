@@ -2,9 +2,12 @@ using FluentAssertions;
 using fennecs;
 using Mafia.Core.Content.Registries;
 using Mafia.Core.Ecs.Components.State;
+using Mafia.Core.Ecs.Components.Tags;
 using Mafia.Core.Events.Definition;
+using Mafia.Core.Ecs.Systems;
 using Mafia.Core.Events.Engine;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Mafia.Core.Tests.Events.Engine;
@@ -63,7 +66,7 @@ public class StoryBeatTriggerTests : IDisposable
         var def = MakeStoryDef(storyDate: new GameDate(1960, 1, 1));
         _repo.Register(def);
 
-        var trigger = new StoryBeatTrigger(_repo, _world, _history);
+        var trigger = new StoryBeatTrigger(_repo, _world, _history, new TargetPoolResolver(), NullLogger<StoryBeatTrigger>.Instance);
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
         candidates.Should().BeEmpty();
@@ -77,7 +80,7 @@ public class StoryBeatTriggerTests : IDisposable
         var def = MakeStoryDef(storyDate: new GameDate(1950, 1, 1));
         _repo.Register(def);
 
-        var trigger = new StoryBeatTrigger(_repo, _world, _history);
+        var trigger = new StoryBeatTrigger(_repo, _world, _history, new TargetPoolResolver(), NullLogger<StoryBeatTrigger>.Instance);
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
         candidates.Should().HaveCount(1);
@@ -93,7 +96,7 @@ public class StoryBeatTriggerTests : IDisposable
         var def = MakeStoryDef(storyDate: date);
         _repo.Register(def);
 
-        var trigger = new StoryBeatTrigger(_repo, _world, _history);
+        var trigger = new StoryBeatTrigger(_repo, _world, _history, new TargetPoolResolver(), NullLogger<StoryBeatTrigger>.Instance);
         var candidates = trigger.GetCandidates(date).ToList();
 
         candidates.Should().HaveCount(1);
@@ -109,7 +112,7 @@ public class StoryBeatTriggerTests : IDisposable
         var def = MakeStoryDef();
         _repo.Register(def);
 
-        var trigger = new StoryBeatTrigger(_repo, _world, _history);
+        var trigger = new StoryBeatTrigger(_repo, _world, _history, new TargetPoolResolver(), NullLogger<StoryBeatTrigger>.Instance);
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
         candidates.Should().HaveCount(1);
@@ -128,7 +131,7 @@ public class StoryBeatTriggerTests : IDisposable
         // Record that the event already fired for 'entity'
         _history.Record(def.Id, entity, new GameDate(1950, 5, 1));
 
-        var trigger = new StoryBeatTrigger(_repo, _world, _history);
+        var trigger = new StoryBeatTrigger(_repo, _world, _history, new TargetPoolResolver(), NullLogger<StoryBeatTrigger>.Instance);
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
         // Only 'other' should produce a candidate
@@ -146,7 +149,7 @@ public class StoryBeatTriggerTests : IDisposable
         var def = MakeStoryDef();
         _repo.Register(def);
 
-        var trigger = new StoryBeatTrigger(_repo, _world, _history);
+        var trigger = new StoryBeatTrigger(_repo, _world, _history, new TargetPoolResolver(), NullLogger<StoryBeatTrigger>.Instance);
         var candidates = trigger.GetCandidates(new GameDate(1950, 6, 15)).ToList();
 
         candidates.Count.Should().Be(3);

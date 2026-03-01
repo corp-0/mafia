@@ -1,11 +1,10 @@
+using Humanizer;
 using Mafia.Core.Content.Parsers.Dtos;
 using Mafia.Core.Ecs.Components.Rank;
 using Mafia.Core.Ecs.Components.State;
 using Mafia.Core.Events.Effects;
 using Mafia.Core.Events.Effects.Interfaces;
-using Mafia.Core.Opinions;
 using Mafia.Core.Text;
-using Mafia.Core.Time;
 
 namespace Mafia.Core.Content.Factories;
 
@@ -47,12 +46,9 @@ public partial class EffectFactory
 
             "add_memory" => new AddMemory(
                 dto.From!, dto.To!,
-                new OpinionMemory
-                {
-                    DefinitionId = dto.MemoryId!,
-                    Amount = dto.Amount ?? 0,
-                    ExpiresOn = GameDate.Parse(dto.ExpiresOn!)
-                }),
+                dto.MemoryId!,
+                dto.Amount ?? 0,
+                dto.ExpiresInDays ?? 0),
 
             "remove_memory" => new RemoveMemory(
                 dto.From!, dto.To!, dto.MemoryId!),
@@ -65,6 +61,9 @@ public partial class EffectFactory
 
             "change_nickname" => new ChangeNickname(
                 dto.Path!, dto.Nickname!),
+
+            "modify_wealth_percent" => new ModifyWealthPercent(
+                dto.Path!, dto.Amount ?? 0),
 
             "settle_expenses" => new SettleExpenses(dto.Path!),
 
@@ -81,7 +80,7 @@ public partial class EffectFactory
     }
 
     private static string Normalize(string input) =>
-        input.Replace("_", "").ToLowerInvariant();
+        input.Pascalize().ToLower();
 
     private static ExpenseCategory ParseExpenseCategory(string category) =>
         Enum.Parse<ExpenseCategory>(category, ignoreCase: true);

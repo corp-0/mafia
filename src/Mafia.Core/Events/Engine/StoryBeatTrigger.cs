@@ -2,15 +2,20 @@ using fennecs;
 using Mafia.Core.Content.Registries;
 using Mafia.Core.Context;
 using Mafia.Core.Ecs.Components.State;
+using Mafia.Core.Ecs.Components.Tags;
+using Mafia.Core.Ecs.Systems;
 using Mafia.Core.Events.Definition;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging;
 
 namespace Mafia.Core.Events.Engine;
 
 public class StoryBeatTrigger(
     IEventDefinitionRepository definitions,
     World world,
-    IEventHistory history) : IEventTriggerSource
+    IEventHistory history,
+    TargetPoolResolver poolResolver,
+    ILogger<StoryBeatTrigger> logger) : IEventTriggerSource
 {
     private readonly Stream<Character> _aliveCharacters =
         world.Query<Character>().Not<Disabled>().Stream();
@@ -42,6 +47,15 @@ public class StoryBeatTrigger(
                     EventHistory = history
                 };
                 scope.WithAnchor("root", entity);
+
+                if (def.TargetSelection is { } selection)
+                {
+                    var target = poolResolver.ResolveTarget(selection, entity, scope);
+                    if (target is null)
+                        continue;
+
+                    scope.WithAnchor("target", target.Value);
+                }
 
                 candidates.Add(new EventCandidate(def, scope));
             }

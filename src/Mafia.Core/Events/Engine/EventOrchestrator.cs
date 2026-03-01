@@ -1,8 +1,10 @@
 using fennecs;
 using Mafia.Core.Content.Registries;
 using Mafia.Core.Context;
+using Mafia.Core.Ecs.Systems;
 using Mafia.Core.Events.Definition;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging;
 
 namespace Mafia.Core.Events.Engine;
 
@@ -17,7 +19,9 @@ public class EventOrchestrator(
     EventQueue queue,
     MtthCalculator mtthCalculator,
     AiEventResolver aiResolver,
-    IEventHistory history)
+    IEventHistory history,
+    TargetPoolResolver poolResolver,
+    ILogger<EventOrchestrator> logger)
 {
     private readonly List<IEventTriggerSource> _sources = [];
 
@@ -174,6 +178,17 @@ public class EventOrchestrator(
         var scope = newScope ?? throw new InvalidOperationException(
             $"Chained event '{eventId}' triggered without a scope. " +
             "Use TriggerEvent with a scope or ensure the original scope propagates.");
+
+        if (chainedDef.TargetSelection is { } selection)
+        {
+            var root = scope.ResolveAnchor("root");
+            if (root is not { } rootEntity) return;
+
+            var target = poolResolver.ResolveTarget(selection, rootEntity, scope);
+            if (target is null) return;
+
+            scope.WithAnchor("target", target.Value);
+        }
 
         queue.Enqueue(new QualifiedEvent(chainedDef, scope, chainedDef.Priority, scope.CurrentDate));
     }

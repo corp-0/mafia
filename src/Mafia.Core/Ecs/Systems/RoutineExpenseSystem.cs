@@ -1,12 +1,14 @@
 using fennecs;
 using Mafia.Core.Ecs.Components.State;
+using Mafia.Core.Ecs.Components.Tags;
 using Mafia.Core.Ecs.Relations;
 using Mafia.Core.Events.Engine;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging;
 
 namespace Mafia.Core.Ecs.Systems;
 
-public class RoutineExpenseSystem(World world) : ITickSystem
+public class RoutineExpenseSystem(World world, ILogger<RoutineExpenseSystem> logger) : ITickSystem
 {
     private const int BASE_FOOD_PER_MEMBER = 30;
     private const int BASE_HOUSING_PER_MEMBER = 20;

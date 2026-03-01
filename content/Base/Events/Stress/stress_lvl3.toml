@@ -1,0 +1,161 @@
+id = "stress_lvl3"
+title_key = "Fraying at the edges"
+description_key = "Your hands won't stay still. You snap at someone over nothing and see the fear in their eyes. Something has to give."
+trigger_type = "pulse"
+mean_time_to_happen_days = 14
+priority = 300
+
+[[conditions]]
+type = "stat_threshold"
+stat = "stress"
+path = "root"
+comparison = ">="
+value = 45
+
+# ── White-knuckle it ───────────────────────────
+[[options]]
+type = "standard"
+id = "white_knuckle"
+display_text_key = "Grit your teeth and bear it"
+resolution_text_key = "You pace the room until your legs ache. The walls feel like they're closing in."
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = 3
+
+# ── Drink hard ─────────────────────────────────
+[[options]]
+type = "standard"
+id = "drink_hard"
+display_text_key = "Hit the bottle, hard"
+resolution_text_key = "You drink until the room goes soft. Tomorrow's problem is tomorrow's."
+
+[options.ai_weight]
+base = 35
+[[options.ai_weight.modifiers]]
+add = 45
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "alcoholic"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -18
+
+[[options.effects]]
+type = "modify_stat"
+stat = "drinking_urge"
+path = "root"
+amount = 25
+
+# ── Chain-smoke ────────────────────────────────
+[[options]]
+type = "standard"
+id = "chain_smoke"
+display_text_key = "Burn through a whole pack"
+resolution_text_key = "Your throat is raw and your fingers are yellow. But the shaking stopped."
+
+[options.ai_weight]
+base = 25
+[[options.ai_weight.modifiers]]
+add = 40
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "chain_smoker"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -10
+
+[[options.effects]]
+type = "modify_stat"
+stat = "smoking_urge"
+path = "root"
+amount = 22
+
+# ── Binge eat ──────────────────────────────────
+[[options]]
+type = "standard"
+id = "binge_eat"
+display_text_key = "Eat until it stops hurting"
+resolution_text_key = "You order enough for three people and finish it all. The shame comes later."
+
+[options.ai_weight]
+base = 20
+[[options.ai_weight.modifiers]]
+add = 35
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "glutton"
+path = "root"
+
+[[options.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -8
+
+[[options.effects]]
+type = "modify_stat"
+stat = "eating_urge"
+path = "root"
+amount = 18
+
+# ── Gamble recklessly ──────────────────────────
+[[options]]
+type = "random"
+id = "gamble_reckless"
+display_text_key = "Raise the stakes"
+
+[options.ai_weight]
+base = 20
+[[options.ai_weight.modifiers]]
+add = 45
+[options.ai_weight.modifiers.condition]
+type = "has_tag"
+tag = "gambler"
+path = "root"
+
+[[options.outcomes]]
+weight = 40
+resolution_text_key = "You double down and it pays off. Your hands are still shaking, but now it's from excitement."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = -18
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 30
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = 15
+
+[[options.outcomes]]
+weight = 60
+resolution_text_key = "You chase a bad hand all night. By the time you fold, the damage is done."
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "stress"
+path = "root"
+amount = 8
+[[options.outcomes.effects]]
+type = "modify_stat"
+stat = "gambling_urge"
+path = "root"
+amount = 20
+[[options.outcomes.effects]]
+type = "modify_wealth_percent"
+path = "root"
+amount = -15

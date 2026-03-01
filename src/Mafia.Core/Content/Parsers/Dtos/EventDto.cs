@@ -11,6 +11,7 @@ public class EventDto
     public bool IsOneTimeOnly { get; set; }
     public int CooldownDays { get; set; }
     public int Priority { get; set; }
+    public string? Presentation { get; set; }
 
     public List<ConditionDto>? Conditions { get; set; }
     public List<OptionDto>? Options { get; set; }

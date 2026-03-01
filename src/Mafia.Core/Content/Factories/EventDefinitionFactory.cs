@@ -1,3 +1,4 @@
+using Humanizer;
 using Mafia.Core.Content.Parsers.Dtos;
 using Mafia.Core.Events.Conditions;
 using Mafia.Core.Events.Conditions.Interfaces;
@@ -16,31 +17,36 @@ public static class EventDefinitionFactory
             ? throw new ArgumentException("EventDto must have at least one option.")
             : dto.Options.Select(CreateOption).ToArray();
 
-        return Normalize(dto.TriggerType) switch
+        return ParseTomlEnum(dto.TriggerType, TriggerType.Chained) switch
         {
-            null or "chained" => new ChainedEventDefinition
+            TriggerType.Chained => new ChainedEventDefinition
             {
                 Id = dto.Id,
                 TitleKey = dto.TitleKey,
                 DescriptionKey = dto.DescriptionKey,
-                Scope = ParseScopeType(dto.ScopeType),
+                Scope = ParseTomlEnum(dto.ScopeType, ScopeType.Character),
                 Conditions = conditions,
                 Options = options,
                 IsOneTimeOnly = dto.IsOneTimeOnly,
                 CooldownDays = dto.CooldownDays,
                 Priority = dto.Priority,
+                Presentation = ParseTomlEnum(dto.Presentation, EventPresentation.Popup),
+                TargetSelection = dto.TargetSelection is not null
+                    ? CreateTargetSelection(dto.TargetSelection)
+                    : null,
             },
-            "pulse" => new PulseEventDefinition
+            TriggerType.Pulse => new PulseEventDefinition
             {
                 Id = dto.Id,
                 TitleKey = dto.TitleKey,
                 DescriptionKey = dto.DescriptionKey,
-                Scope = ParseScopeType(dto.ScopeType),
+                Scope = ParseTomlEnum(dto.ScopeType, ScopeType.Character),
                 Conditions = conditions,
                 Options = options,
                 IsOneTimeOnly = dto.IsOneTimeOnly,
                 CooldownDays = dto.CooldownDays,
                 Priority = dto.Priority,
+                Presentation = ParseTomlEnum(dto.Presentation, EventPresentation.Popup),
                 MeanTimeToHappenDays = dto.MeanTimeToHappenDays
                                        ?? throw new ArgumentException("PulseEventDefinition requires MeanTimeToHappenDays."),
                 MtthModifiers = dto.MtthModifiers?.Select(CreateMtthModifier).ToArray() ?? [],
@@ -48,48 +54,57 @@ public static class EventDefinitionFactory
                     ? CreateTargetSelection(dto.TargetSelection)
                     : null,
             },
-            "onaction" => new ActionEventDefinition
+            TriggerType.OnAction => new ActionEventDefinition
             {
                 Id = dto.Id,
                 TitleKey = dto.TitleKey,
                 DescriptionKey = dto.DescriptionKey,
-                Scope = ParseScopeType(dto.ScopeType),
+                Scope = ParseTomlEnum(dto.ScopeType, ScopeType.Character),
                 Conditions = conditions,
                 Options = options,
                 IsOneTimeOnly = dto.IsOneTimeOnly,
                 CooldownDays = dto.CooldownDays,
                 Priority = dto.Priority,
+                Presentation = ParseTomlEnum(dto.Presentation, EventPresentation.Popup),
                 OnActionId = dto.OnActionId
                              ?? throw new ArgumentException("ActionEventDefinition requires OnActionId."),
+                TargetSelection = dto.TargetSelection is not null
+                    ? CreateTargetSelection(dto.TargetSelection)
+                    : null,
             },
-            "storybeat" => new StoryBeatEventDefinition
+            TriggerType.StoryBeat => new StoryBeatEventDefinition
             {
                 Id = dto.Id,
                 TitleKey = dto.TitleKey,
                 DescriptionKey = dto.DescriptionKey,
-                Scope = ParseScopeType(dto.ScopeType),
+                Scope = ParseTomlEnum(dto.ScopeType, ScopeType.Character),
                 Conditions = conditions,
                 Options = options,
                 IsOneTimeOnly = dto.IsOneTimeOnly,
                 CooldownDays = dto.CooldownDays,
                 Priority = dto.Priority,
+                Presentation = ParseTomlEnum(dto.Presentation, EventPresentation.Popup),
                 StoryDate = GameDate.Parse(dto.StoryDate
                                            ?? throw new ArgumentException("StoryBeatEventDefinition requires StoryDate.")),
+                TargetSelection = dto.TargetSelection is not null
+                    ? CreateTargetSelection(dto.TargetSelection)
+                    : null,
             },
             var unknown => throw new ArgumentException($"Unknown trigger type: '{dto.TriggerType}'")
         };
     }
 
-    private static ScopeType ParseScopeType(string? scopeType)
+    private static TEnum ParseTomlEnum<TEnum>(string? raw, TEnum defaultValue) where TEnum : struct, Enum
     {
-        return Normalize(scopeType) switch
-        {
-            null or "character" => ScopeType.Character,
-            "location" or "territory" => ScopeType.Location,
-            "relationship" => ScopeType.Relationship,
-            "global" => ScopeType.Global,
-            _ => throw new ArgumentException($"Unknown scope type: '{scopeType}'")
-        };
+        if (string.IsNullOrWhiteSpace(raw))
+            return defaultValue;
+
+        var pascalized = raw.Pascalize();
+
+        if (Enum.TryParse<TEnum>(pascalized, out var result))
+            return result;
+
+        throw new ArgumentException($"Unknown {typeof(TEnum).Name}: '{raw}'");
     }
 
     private static IEventCondition? FoldConditions(List<ConditionDto>? conditions)
@@ -105,9 +120,9 @@ public static class EventDefinitionFactory
 
     private static EventOptionDefinition CreateOption(OptionDto dto)
     {
-        return Normalize(dto.Type) switch
+        return ParseTomlEnum(dto.Type, OptionType.Standard) switch
         {
-            null or "standard" => new StandardOptionDefinition
+            OptionType.Standard => new StandardOptionDefinition
             {
                 Id = dto.Id,
                 DisplayTextKey = dto.DisplayTextKey,
@@ -118,11 +133,11 @@ public static class EventDefinitionFactory
                 Outcome = CreateOutcome(dto.Outcome ?? new OptionOutcomeDto
                 {
                     ResolutionTextKey = dto.ResolutionTextKey
-                                     ?? throw new ArgumentException("Standard option requires an Outcome or ResolutionText."),
+                                        ?? throw new ArgumentException("Standard option requires an Outcome or ResolutionText."),
                     Effects = dto.Effects,
                 }),
             },
-            "skillcheck" => new SkillCheckOptionDefinition
+            OptionType.SkillCheck => new SkillCheckOptionDefinition
             {
                 Id = dto.Id,
                 DisplayTextKey = dto.DisplayTextKey,
@@ -141,7 +156,7 @@ public static class EventDefinitionFactory
                 Failure = CreateOutcome(dto.Failure
                                         ?? throw new ArgumentException("SkillCheck option requires Failure outcome.")),
             },
-            "random" => new RandomOptionDefinition
+            OptionType.Random => new RandomOptionDefinition
             {
                 Id = dto.Id,
                 DisplayTextKey = dto.DisplayTextKey,
@@ -259,6 +274,4 @@ public static class EventDefinitionFactory
         return null;
     }
 
-    private static string? Normalize(string? input) =>
-        input?.Replace("_", "").ToLowerInvariant();
 }

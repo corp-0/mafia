@@ -1,9 +1,14 @@
 using Mafia.Core.Content.Parsers;
 using Mafia.Core.Content.Registries;
+using Microsoft.Extensions.Logging;
 
 namespace Mafia.Core.Content;
 
-public sealed class ContentLoader(IEventDefinitionRepository eventRepository, IOpinionRuleRepository opinionRuleRepository)
+public sealed class ContentLoader(
+    IEventDefinitionRepository eventRepository,
+    IOpinionRuleRepository opinionRuleRepository,
+    ContentMetadataStore metadata,
+    ILogger<ContentLoader> logger)
 {
     public event Action? ContentLoaded;
     
@@ -51,35 +56,38 @@ public sealed class ContentLoader(IEventDefinitionRepository eventRepository, IO
 
         foreach (ContentPackDefinition pack in sorted)
         {
-            LoadEventsFromPack(pack);
-            LoadOpinionRulesFromPack(pack);
+            LoadMetadataFromPack(pack, "Tags", "tags.toml", metadata.Tags);
+            LoadMetadataFromPack(pack, "Relations", "relations.toml", metadata.Relations);
+            LoadMetadataFromPack(pack, "Stats", "stats.toml", metadata.Stats);
+            LoadDirectoryContent(pack, "Events", EventTomlReader.Read, eventRepository.Register);
+            LoadDirectoryContent(pack, "Opinions", OpinionRuleTomlReader.Read, opinionRuleRepository.Register);
             
             ContentLoaded?.Invoke();
         }
     }
 
-    private void LoadEventsFromPack(ContentPackDefinition pack)
+    private static void LoadMetadataFromPack(
+        ContentPackDefinition pack, string subdirectory, string filename, ContentMetadataRegistry registry)
     {
-        var eventsDirectory =  Path.Combine(pack.DirectoryPath, "Events");
-        if (!Directory.Exists(eventsDirectory)) return;
-        
-        foreach (var file in Directory.EnumerateFiles(eventsDirectory, "*.toml", SearchOption.AllDirectories))
-        {
-            var toml = File.ReadAllText(file);
-            var definition = EventTomlReader.Read(toml);
-            eventRepository.Register(definition);
-        }
+        var file = Path.Combine(pack.DirectoryPath, subdirectory, filename);
+        if (!File.Exists(file)) return;
+
+        var toml = File.ReadAllText(file);
+        var entries = MetadataTomlReader.Read(toml);
+        foreach (var (key, meta) in entries)
+            registry.Register(key, meta);
     }
 
-    private void LoadOpinionRulesFromPack(ContentPackDefinition pack)
+    private static void LoadDirectoryContent<T>(
+        ContentPackDefinition pack, string subdirectory, Func<string, T> reader, Action<T> register)
     {
-        var opinionsDirectory = Path.Combine(pack.DirectoryPath, "Opinions");
-        if (!Directory.Exists(opinionsDirectory)) return;
-        foreach (var file in Directory.EnumerateFiles(opinionsDirectory, "*.toml", SearchOption.AllDirectories))
+        var directory = Path.Combine(pack.DirectoryPath, subdirectory);
+        if (!Directory.Exists(directory)) return;
+
+        foreach (var file in Directory.EnumerateFiles(directory, "*.toml", SearchOption.AllDirectories))
         {
             var toml = File.ReadAllText(file);
-            var definition = OpinionRuleTomlReader.Read(toml);
-            opinionRuleRepository.Register(definition);
+            register(reader(toml));
         }
     }
 }

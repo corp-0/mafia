@@ -1,6 +1,7 @@
 using fennecs;
 using FluentAssertions;
 using Mafia.Core.Ecs.Components.State;
+using Mafia.Core.Ecs.Components.Tags;
 using Mafia.Core.Ecs.Relations;
 using Mafia.Core.Text;
 using Xunit;

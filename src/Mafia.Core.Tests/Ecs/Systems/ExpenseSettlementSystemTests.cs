@@ -1,12 +1,14 @@
 using fennecs;
 using FluentAssertions;
 using Mafia.Core.Ecs.Components.State;
+using Mafia.Core.Ecs.Components.Tags;
 using Mafia.Core.Ecs.Relations;
 using Mafia.Core.Ecs.Systems;
 using Mafia.Core.Events.Effects;
 using Mafia.Core.Tests.Events.Engine;
 using Mafia.Core.Text;
 using Mafia.Core.Time;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Mafia.Core.Tests.Ecs.Systems;
@@ -52,7 +54,7 @@ public class ExpenseSettlementSystemTests : IDisposable
         var (household, head) = CreateHouseholdWithHead(1000);
         AddExpense(household, ExpenseCategory.Food, 150);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 2, 1), _trigger);
 
         _trigger.Invocations.Should().HaveCount(1);
@@ -68,7 +70,7 @@ public class ExpenseSettlementSystemTests : IDisposable
         AddExpense(household1, ExpenseCategory.Food, 100);
         AddExpense(household2, ExpenseCategory.Housing, 200);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 1), _trigger);
 
         _trigger.Invocations.Should().HaveCount(2);
@@ -83,7 +85,7 @@ public class ExpenseSettlementSystemTests : IDisposable
         var (household, _) = CreateHouseholdWithHead(1000);
         AddExpense(household, ExpenseCategory.Food, 150);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 2, 15), _trigger);
 
         _trigger.Invocations.Should().BeEmpty();
@@ -94,7 +96,7 @@ public class ExpenseSettlementSystemTests : IDisposable
     {
         CreateHouseholdWithHead(500);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 1), _trigger);
 
         _trigger.Invocations.Should().BeEmpty();
@@ -109,7 +111,7 @@ public class ExpenseSettlementSystemTests : IDisposable
 
         CountExpenseEntities().Should().Be(2);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 2, 1), _trigger);
 
         CountExpenseEntities().Should().Be(2);
@@ -122,7 +124,7 @@ public class ExpenseSettlementSystemTests : IDisposable
         AddExpense(household, ExpenseCategory.Food, 150);
         AddExpense(household, ExpenseCategory.Housing, 100);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 2, 1), _trigger);
 
         head.Ref<Wealth>().Amount.Should().Be(1000);
@@ -135,7 +137,7 @@ public class ExpenseSettlementSystemTests : IDisposable
         household.Add(new Household());
         AddExpense(household, ExpenseCategory.Food, 50);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 1), _trigger);
 
         _trigger.Invocations.Should().BeEmpty();
@@ -149,7 +151,7 @@ public class ExpenseSettlementSystemTests : IDisposable
         AddExpense(household, ExpenseCategory.Housing, 100);
         AddExpense(household, ExpenseCategory.Entertainment, 200);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 1), _trigger);
 
         _trigger.Invocations.Should().HaveCount(1);
@@ -161,7 +163,7 @@ public class ExpenseSettlementSystemTests : IDisposable
         var (household, _) = CreateHouseholdWithHead(1000);
         AddExpense(household, ExpenseCategory.Food, 100);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 1), _trigger);
 
         _trigger.Invocations[0].Scope.GetMeta("ui_hint").Should().Be("bills");
@@ -174,7 +176,7 @@ public class ExpenseSettlementSystemTests : IDisposable
         AddExpense(household, ExpenseCategory.Food, 150);
         AddExpense(household, ExpenseCategory.Housing, 100);
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 1), _trigger);
 
         var items = _trigger.Invocations[0].Scope.GetMeta("expenses") as List<ExpenseLineItem>;
@@ -193,7 +195,7 @@ public class ExpenseSettlementSystemTests : IDisposable
         expense.Add(new ExpenseOf(household), household);
         expense.Add(new ExpenseLabel(label));
 
-        var system = new ExpenseSettlementSystem(_world);
+        var system = new ExpenseSettlementSystem(_world, NullLogger<ExpenseSettlementSystem>.Instance);
         system.Tick(new GameDate(1930, 1, 1), _trigger);
 
         var items = _trigger.Invocations[0].Scope.GetMeta("expenses") as List<ExpenseLineItem>;
