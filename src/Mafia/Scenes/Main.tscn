@@ -1,3 +1,10 @@
 [gd_scene format=3 uid="uid://dfmyi258uka45"]
 
-[node name="Game" type="Node" unique_id=1850114845]
+[ext_resource type="Script" uid="uid://b1u7kvl3jesl2" path="res://src/Mafia/Main.cs" id="1_trcqa"]
+[ext_resource type="PackedScene" uid="uid://bo1of1b2yagoc" path="res://src/Mafia/Scenes/Game.tscn" id="2_u7h62"]
+[ext_resource type="PackedScene" uid="uid://cevteditor" path="res://src/Mafia/EventEditor/EventEditor.tscn" id="3_sn4ci"]
+
+[node name="Main" type="Node" unique_id=488828613]
+script = ExtResource("1_trcqa")
+GameScene = ExtResource("2_u7h62")
+EditorScene = ExtResource("3_sn4ci")

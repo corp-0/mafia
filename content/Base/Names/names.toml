@@ -1,0 +1,317 @@
+# ═══════════════════════════════════════════════
+#  Surnames
+# ═══════════════════════════════════════════════
+
+surnames = [
+    "Acconci", "Addabboo", "Addario", "Addonizio", "Adducci", "Agnelli",
+    "Agramonte", "Albanese", "Aletti", "Alioto", "Alito", "Amatuzio",
+    "Amodei", "Anelli", "Anfuso", "Antonelli", "Antonini", "Ardolino",
+    "Arnolt", "Arpaio", "Attanasio", "Auletta", "Avellone", "Azzarello",
+    "Baldacci", "Balossi", "Barbera", "Barletta", "Baroni", "Barrasso",
+    "Barsotti", "Bartiromo", "Basilone", "Bastianich", "Batali", "Bell",
+    "Bellanca", "Bellavia", "Belli", "Bellisario", "Belluschi", "Benigno",
+    "Bentivolio", "Berardini", "Berlanti", "Bernardin", "Bevilacqua",
+    "Biaggi", "Bianchi", "Biden", "Bisceglia", "Boccia", "Boldrin",
+    "Bonamici", "Bonaparte", "Bono", "Boria", "Borzage", "Bossi",
+    "Boyardee", "Brady", "Braggiotti", "Brancaccio", "Braschi", "Briguglio",
+    "Brunetti", "Bucco", "Buerkle", "Bufalino", "Buono", "Buscaglia",
+    "Buscema", "Busti",
+    "Cabrini", "Cacioppo", "Cafardo", "Calabi", "Califano", "Caligiuri",
+    "Caliguiri", "Campanella", "Capecchi", "Capizzi", "Capone", "Capozzoli",
+    "Caprio", "Capuano", "Capullo", "Caputo", "Carafano", "Caray",
+    "Carcaterra", "Carcieri", "Cardini", "Carlson", "Carlucci", "Carosa",
+    "Casamassina", "Casamento", "Casolaro", "Cassini", "Castellani",
+    "Cavaglieri", "Cavallaro", "Cavalli-Sforza", "Cavicchia", "Cavoli",
+    "Celebrezze", "Celeste", "Cellucci", "Chiarello", "Christie", "Ciampi",
+    "Cianci", "Ciardi", "Ciccone", "Cicilline", "Cimino", "Cino",
+    "Cipriani", "Cody", "Colacello", "Colicchio", "Conte", "Conway",
+    "Corso", "Corvino", "Corzine", "Cozzarelli", "Cretella", "Crimi",
+    "Cruz", "Cucci", "Cumia", "Cunanan", "Cuomo",
+    "D'Alesandro", "D'Amato", "D'Ambrosi", "D'Amelio", "D'Andrea",
+    "D'Ortona", "Da Ponte", "Daddario", "De Felitta", "De Laurentiis",
+    "De Marco", "De Niro", "De Rosa", "De Santis", "DeAndrea", "DeAngelo",
+    "DeBartolo", "DeCandido", "DeConcini", "DeFanti", "DeFazio", "DeGette",
+    "DeGioia", "DeGrazia", "DeLauro", "DeLillo", "DeLisi", "DeSalvo",
+    "DeSantis", "DeSimone", "DeStefano", "Del Sesto", "Deluzio", "Denari",
+    "Di Donato", "Di Modica", "Di Suvero", "DiDonato", "DiFrancesco",
+    "DiGia", "DiGiovanni", "DiLieto", "DiLorenzo", "DiNardo", "DiPrete",
+    "DiSalle", "DioGuardi", "Domenici", "Dondero", "Dorsey", "Doyle",
+    "Dulbecco", "Dundee",
+    "Eakin", "Edwards", "Einaudi", "Enrico", "Ensign",
+    "Fabbro", "Fabozzi", "Faggin", "Fama", "Fano", "Fantano", "Fante",
+    "Fasano", "Fasi", "Fauci", "Favalora", "Fazio", "Ferdinandi",
+    "Ferguson", "Ferlinghetti", "Fermi", "Ferrari", "Ferraro", "Fieri",
+    "Fili", "Flamini", "Florio", "Fogazzaro", "Foglietta", "Fonzi",
+    "Fortuna", "Foschini", "Fossella", "Foxx", "Francona", "Franzese",
+    "Franzoni", "Frassinelli", "Frazetta", "Freeh", "Frisa", "Furcolo",
+    "Furnari", "Fusco",
+    "Gaeta", "Galleani", "Gallico", "Gallo", "Gallucci", "Gangemi",
+    "Garbarino", "Garcetti", "Gargiulo", "Gennaro", "Gherardi", "Ghiorso",
+    "Giacconi", "Giacoia", "Giaimo", "Giamatti", "Giambastiani",
+    "Gianforte", "Giannini", "Gioia", "Giolitti", "Giordano", "Giorgianni",
+    "Gioseffi", "Giovannitti", "Giuliani", "Giurgola", "Graglia", "Grasso",
+    "Grimm", "Groppi", "Grucci", "Guariglia", "Guarini", "Guido",
+    "Harrison", "Hart", "Hessler", "Hunter",
+    "Iacocca", "Iadarola", "Ignarro", "Impellitteri", "Infantino",
+    "Ingenito", "Iorio",
+    "Jade",
+    "Keatley", "Kelly", "Knowles",
+    "La Guardia", "LaFalce", "Lamantia", "Lamberti", "Lampson", "Landrieu",
+    "Langone", "Lantz", "Lanza", "Lanzetta", "Laws", "Laxalt", "Lazio",
+    "Leahy", "Leone", "Leshko", "Levi-Montalcini", "Licata", "Lioy",
+    "Lisanti", "LoBiondo", "LoMedico", "Lombardi", "Lombardo", "London",
+    "Longino", "Longo", "Lopez", "Luria",
+    "Maccioni", "Maestri", "Maffei", "Magliola", "Manchin", "Mangione",
+    "Manuel", "Manzullo", "Maraziti", "Marcantonio", "Marcellino",
+    "Marciano", "Marden", "Maresca", "Marino", "Martini", "Mascara",
+    "Massimino", "Masto", "Mazzoli", "Mazzucato", "McCarthy", "Melia",
+    "Menino", "Merlino", "Messina", "Meucci", "Mica", "Micali", "Mitrione",
+    "Modigliani", "Molinari", "Monachesi", "Mongiardo", "Monnette",
+    "Montana", "Morais", "Morano", "Morella", "Morlacchi", "Moscone",
+    "Mugavero", "Murtha",
+    "Napolitano", "Nardini", "Navarro", "Nielsen", "Nigro", "Nivola",
+    "Nocenti", "Noel", "Notte", "Nowak",
+    "Oliva", "Olivo", "Orechio", "Orlando", "Ossana",
+    "Paca", "Pace", "Paglia", "Palazzo", "Pallone", "Palmiotti", "Panetta",
+    "Panici", "Pansino", "Paolini", "Paolino", "Parducci", "Parenti",
+    "Pascrell", "Pasin", "Pasinetti", "Pastore", "Pataki", "Pauletto",
+    "Pecora", "Pei", "Pellicciotti", "Pelosi", "Perino", "Perrotta",
+    "Pesci", "Petrosino", "Phillips", "Pierro", "Pileggi", "Pilla",
+    "Piomelli", "Piston", "Pistone", "Pizzarelli", "Poletti", "Politi",
+    "Pompeo", "Ponza", "Ponzi", "Porcello", "Potolicchio", "Prejean",
+    "Puzo",
+    "Rafal", "Raimondo", "Ranalli", "Ray", "Renacci", "Renzi", "Rico",
+    "Rigali", "Rizzo", "Rodino", "Rogallo", "Romano", "Romita", "Romualdi",
+    "Roncalio", "Rosa", "Rosati", "Rosellini", "Rossi", "Rossio", "Rota",
+    "Roukema", "Ruggerio", "Rulli", "Russo", "Ryan",
+    "Saglimbeni", "Salerno", "Salvadori", "Salvatore",
+    "Sangiovanni-Vincentelli", "Santelli", "Santenello", "Santorum",
+    "Sarfatti", "Scala", "Scalapino", "Scalia", "Scalise", "Scanga",
+    "Scaparrotti", "Scaramucci", "Scarne", "Scarpa", "Scaruffi",
+    "Scavullo", "Schiavo", "Schiro", "Schirra", "Sciolino", "Sciortino",
+    "Sciutto", "Sedita", "Segr", "Serafini", "Serpico", "Signorile",
+    "Sinclair", "Siriano", "Sirico", "Sirotta", "Sisti", "Sliwa",
+    "Smerconish", "Smith", "Soleri", "Sorrenti", "Soto", "Spinola",
+    "Staub", "Stefani", "Stefanik", "Stella", "Stellino", "Suozzi",
+    "Tacopina", "Talese", "Taliaferro", "Tancredo", "Teoli", "Tesoro",
+    "Thompson", "Tiberi", "Tito", "Torricelli", "Toti", "Traficant",
+    "Trause", "Tresca", "Trigiani", "Tullio",
+    "Valachi", "Valastro", "Valenti", "Valentino", "Vallone", "Vento",
+    "Venturi", "Verducci", "Versace", "Villani", "Viscardi", "Viterbi",
+    "Volpe",
+    "Way", "Weiss", "Weldon", "Wenstrup", "Wiedemann",
+    "XIV",
+    "Zamboni", "Zamperini", "Zanetti", "Zimbardo", "Zinni",
+    "born", "de Blasio", "de Lauretis", "dePaola", "di Cesnola",
+    "di Giovanni", "di Prima",
+]
+
+# ═══════════════════════════════════════════════
+#  Male Names
+# ═══════════════════════════════════════════════
+
+[male]
+names = [
+    "Adam", "Al", "Albert", "Alberto", "Alessio", "Alfred", "Amadeo",
+    "Andrea", "Andrew", "Angelo", "Anthony", "Antonin", "Antonio", "Argeo",
+    "Aristides", "Arturo", "Attilio",
+    "Bancroft", "Bartolomeo", "Biagio", "Bill", "Bob", "Brad", "Brian",
+    "Bruce", "Bruno", "Bucky", "Buddy",
+    "Caesar", "Carlo", "Carmine", "Charles", "Chris", "Christian",
+    "Christopher", "Corrado", "Costantino", "Curtis",
+    "Dan", "Daniel", "Danny", "Darren", "Dave", "David", "Dennis", "Dick",
+    "Dom", "Dominick", "Don", "Donald", "Duane",
+    "Edmund", "Edward", "Emile", "Emilio", "Enea", "Enrico", "Eric",
+    "Ernest", "Ettore", "Eugene", "Eugenio", "Evan",
+    "Federico", "Felix", "Ferdinand", "Fiorello", "Fortune", "Foster",
+    "Francesco", "Francis", "Franco", "Frank", "Fred", "Frederick", "Fulvio",
+    "Gaeton", "Garry", "Gay", "Generoso", "Geno", "George", "Gerard",
+    "Gian-Carlo", "Gil", "Giorgio", "Giovanni", "Giuseppe", "Greg",
+    "Gregory", "Guy",
+    "Harry", "Hector", "Henry", "Hugh", "Humbert",
+    "Igor", "Italo", "Ivan",
+    "Jack", "James", "Jasper", "Jay", "Jim", "Jimmy", "Joe", "John", "Jon",
+    "Joseph", "Justin",
+    "Keith", "Ken", "Kenneth", "Kerry", "Kevin",
+    "Lawrence", "Lee", "Leo", "Leon", "Lino", "Lorenzo", "Lou", "Louis",
+    "Luigi", "Luis",
+    "Marco", "Mario", "Mark", "Marty", "Matt", "Michael", "Michelangelo",
+    "Michele", "Mike", "Milton", "Mitch",
+    "Neil", "Nicholas", "Nick", "Nicola",
+    "Oleg", "Orra",
+    "Paolo", "Pat", "Patrick", "Paul", "Pete", "Peter", "Philip", "Piero",
+    "Pietro",
+    "Raggio", "Ralph", "Reed", "Renato", "Ricardo", "Riccardo", "Richard",
+    "Rick", "Rob", "Robert", "Roger", "Romaldo", "Romano", "Ron", "Ronald",
+    "Rudolph", "Russell",
+    "Sabato", "Sal", "Salvador", "Salvatore", "Sam", "Samuel", "Santino",
+    "Sebastian", "Serafino", "Severo", "Shane", "Silvio", "Sirio", "Sonny",
+    "Stan", "Steve", "Steven",
+    "Ted", "Teno", "Terry", "Thomas", "Tim", "Timothy", "Tom", "Tomie",
+    "Tony", "Tucker",
+    "Ugo",
+    "Vic", "Victor", "Vince", "Vincent", "Vincenzo", "Virginio", "Vito",
+    "Walter", "William",
+]
+
+[male.nicknames]
+Albert = ["Al", "Bert"]
+Alberto = ["Al", "Berto"]
+Alfred = ["Al", "Alfie", "Fred"]
+Andrew = ["Andy", "Drew"]
+Anthony = ["Tony", "Ant"]
+Antonio = ["Tony", "Tonny", "Nino"]
+Arturo = ["Art", "Artie"]
+Bartolomeo = ["Bart", "Meo"]
+Carlo = ["Charlie"]
+Carmine = ["Carm"]
+Charles = ["Charlie", "Chuck"]
+Christian = ["Chris"]
+Christopher = ["Chris", "Chrissie"]
+Daniel = ["Dan", "Danny"]
+David = ["Dave", "Davey"]
+Dennis = ["Denny"]
+Dominick = ["Dom", "Nicky"]
+Donald = ["Don", "Donnie"]
+Edmund = ["Ed", "Eddie"]
+Edward = ["Ed", "Eddie", "Ted"]
+Emilio = ["Emi"]
+Enrico = ["Rico", "Henry"]
+Ernest = ["Ernie"]
+Eugene = ["Gene"]
+Eugenio = ["Gene"]
+Federico = ["Fred", "Freddy", "Rico"]
+Ferdinand = ["Ferd", "Ferdy"]
+Francesco = ["Frank", "Frankie", "Franco"]
+Francis = ["Frank", "Frankie"]
+Franco = ["Frank", "Frankie"]
+Frank = ["Frankie"]
+Frederick = ["Fred", "Freddy", "Fritz"]
+George = ["Georgie"]
+Giovanni = ["Gianni", "Gio"]
+Giuseppe = ["Joe", "Peppe", "Beppe"]
+Gregory = ["Greg"]
+Henry = ["Hank", "Harry"]
+James = ["Jim", "Jimmy", "Jamie"]
+John = ["Johnny", "Jack"]
+Joseph = ["Joe", "Joey"]
+Kenneth = ["Ken", "Kenny"]
+Kevin = ["Kev"]
+Lawrence = ["Larry"]
+Leonardo = ["Leo"]
+Lorenzo = ["Enzo", "Renzo"]
+Louis = ["Lou", "Louie"]
+Luigi = ["Lou", "Gino"]
+Marco = ["Marc"]
+Mario = ["Mar"]
+Matthew = ["Matt", "Matty"]
+Michael = ["Mike", "Mikey", "Mickey"]
+Michelangelo = ["Mike", "Angelo", "Mick"]
+Michele = ["Mike"]
+Nicholas = ["Nick", "Nicky"]
+Nicola = ["Nick", "Nico"]
+Paolo = ["Paul"]
+Patrick = ["Pat", "Paddy"]
+Paul = ["Paulie"]
+Peter = ["Pete", "Petey"]
+Philip = ["Phil"]
+Pietro = ["Pete"]
+Ralph = ["Ralphie"]
+Renato = ["Reno"]
+Ricardo = ["Rick", "Ricky", "Rico"]
+Riccardo = ["Rick", "Ricky"]
+Richard = ["Rich", "Rick", "Ricky", "Dick"]
+Robert = ["Rob", "Bobby", "Bob"]
+Ronald = ["Ron", "Ronnie"]
+Salvatore = ["Sal", "Sally"]
+Samuel = ["Sam", "Sammy"]
+Santino = ["Sonny"]
+Sebastian = ["Seb"]
+Silvio = ["Sil"]
+Steven = ["Steve"]
+Thomas = ["Tom", "Tommy"]
+Timothy = ["Tim", "Timmy"]
+Victor = ["Vic"]
+Vincent = ["Vince", "Vinnie"]
+Vincenzo = ["Vince", "Vinnie", "Enzo"]
+William = ["Will", "Bill", "Billy", "Willy"]
+
+# ═══════════════════════════════════════════════
+#  Female Names
+# ═══════════════════════════════════════════════
+
+[female]
+names = [
+    "Adriana", "Alessandra", "Alexandra", "Allison", "Alyssa", "Angela",
+    "Ann", "Ashley",
+    "Barbara",
+    "Camille", "Carla", "Carmela", "Carmen", "Carrie", "Cate", "Catherine",
+    "Charli", "Charlotte", "Charly", "Claire", "Connie",
+    "Dana", "Daniela", "Diablo", "Diana", "Diane", "Dixie",
+    "Elaine", "Elettra", "Elise", "Elizabeth", "Ella", "Ellla", "Emily",
+    "Frances", "Francesca",
+    "Geraldine", "Giada", "Giannina", "Gina", "Giuliana", "Giuseppina",
+    "Isa",
+    "Janet", "Janine", "Janis", "Jessica", "Jill",
+    "Karley", "Kellyanne", "Kim", "Kirstjen",
+    "Lauren", "Leslie", "Lidia", "Linda", "Lisa", "Louise", "Luisa",
+    "Lynsey",
+    "Marella", "Marge", "Maria", "Mariana", "Mariangela", "Mary", "Megyn",
+    "Melissa",
+    "Nancy",
+    "Olivia",
+    "Pam",
+    "Rachael", "Rebecca", "Rita", "Rosa", "Rosanna", "Rosaria",
+    "Sheila", "Stacy", "Susan", "Suzanne",
+    "Tabitha", "Teresa",
+    "Vanessa", "Virginia",
+    "Wendy",
+]
+
+[female.nicknames]
+Adriana = ["Adri"]
+Alessandra = ["Ale", "Sandra", "Sandy"]
+Alexandra = ["Alex", "Lexi", "Sandy"]
+Angela = ["Angie"]
+Ashley = ["Ash"]
+Barbara = ["Barb", "Barbie", "Babs"]
+Carmela = ["Carm", "Carmie", "Mela"]
+Carmen = ["Carm"]
+Caroline = ["Carol", "Carrie"]
+Catherine = ["Cathy", "Cat", "Kate", "Katie"]
+Charlotte = ["Charlie", "Lottie"]
+Daniela = ["Dani"]
+Diana = ["Di"]
+Diane = ["Di"]
+Elizabeth = ["Liz", "Lizzy", "Beth", "Betty", "Eliza"]
+Emily = ["Em", "Emmy"]
+Frances = ["Fran", "Frannie"]
+Francesca = ["Frankie", "Fran", "Cesca"]
+Geraldine = ["Geri", "Gerry"]
+Giuliana = ["Giuli", "Julie"]
+Giuseppina = ["Pina", "Gina"]
+Jessica = ["Jess", "Jessie"]
+Katherine = ["Kathy", "Kate", "Katie", "Kit"]
+Lauren = ["Laurie"]
+Linda = ["Lindy"]
+Lisa = ["Lee"]
+Luisa = ["Lou"]
+Maria = ["Mary", "Ria"]
+Mariana = ["Mari"]
+Mariangela = ["Mari", "Angela"]
+Mary = ["Mare"]
+Melissa = ["Mel", "Missy", "Lissa"]
+Nancy = ["Nan"]
+Olivia = ["Liv", "Livvy"]
+Patricia = ["Pat", "Patty", "Trish"]
+Rachael = ["Rach"]
+Rebecca = ["Becca", "Becky"]
+Rosa = ["Rosie"]
+Rosanna = ["Rose", "Rosie", "Anna"]
+Rosaria = ["Rose", "Rosie"]
+Susan = ["Sue", "Susie"]
+Suzanne = ["Sue", "Suzy"]
+Teresa = ["Terry", "Tess", "Tessie"]
+Vanessa = ["Nessa", "Van"]
+Virginia = ["Ginny", "Gina"]
+

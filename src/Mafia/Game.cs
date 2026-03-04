@@ -2,12 +2,12 @@ using fennecs;
 using Godot;
 using Mafia.Content;
 using Mafia.Core;
+using Mafia.Core.Content.Registries;
 using Mafia.Core.Time;
+using Mafia.Core.WorldGen;
 using Mafia.Nodes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Serilog;
-using static Serilog.Events.LogEventLevel;
 
 namespace Mafia;
 
@@ -16,68 +16,34 @@ public partial class Game : Node
 {
     private SimulationTicker _ticker = null!;
     private ILogger<Game> _logger = null!;
+    private GameState _gameState = null!;
+
+    public void ConfigureServices(ServiceCollection services)
+    {
+        var world = new World();
+        _gameState = new GameState(new GameDate(1920, 1, 1));
+
+        services.AddSingleton(world);
+        services.AddSingleton(_gameState);
+        CoreStartup.ConfigureServices(services);
+        GameServices.Initialize(services);
+    }
 
     public override void _Ready()
     {
-        ConfigureSerilog();
-
-        var world = new World();
-        var gameState = new GameState(new GameDate(1920, 1, 1));
-
-        var services = new ServiceCollection();
-        services.AddSingleton(world);
-        services.AddSingleton(gameState);
-        services.AddLogging(builder =>
-        {
-            builder.ClearProviders();
-            builder.AddSerilog(dispose: true);
-        });
-        CoreStartup.ConfigureServices(services);
-        GameServices.Initialize(services);
-
         _logger = GameServices.Get<ILogger<Game>>();
 
         ContentBootstrapper.LoadAllContent();
+
+        var world = GameServices.Get<World>();
+        var nameRepo = GameServices.Get<INameRepository>();
+        var roster = WorldGenerator.Generate(world, nameRepo, logger: _logger);
+        WorldPrinter.Print(roster, msg => _logger.LogInformation("{WorldPrint}", msg));
 
         _ticker = new SimulationTicker();
         AddChild(_ticker);
         _ticker.Initialize();
 
-        _logger.LogInformation("Simulation ready at {CurrentDate}", gameState.CurrentDate);
-    }
-
-    public override void _ExitTree()
-    {
-        Log.CloseAndFlush();
-    }
-
-    private static void ConfigureSerilog()
-    {
-        var logPath = ResolveLogPath();
-
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Is(Debug)
-            .Enrich.FromLogContext()
-            .WriteTo.Console(outputTemplate:
-                "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}")
-            .WriteTo.File(
-                path: logPath,
-                outputTemplate:
-                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}",
-                rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 14,
-                fileSizeLimitBytes: 10 * 1024 * 1024)
-            .CreateLogger();
-    }
-
-    private static string ResolveLogPath()
-    {
-        var baseDir = OS.HasFeature("editor") 
-            ? ProjectSettings.GlobalizePath("res://") 
-            : Path.GetDirectoryName(OS.GetExecutablePath())!;
-
-        var logsDir = Path.Combine(baseDir, "logs");
-        Directory.CreateDirectory(logsDir);
-        return Path.Combine(logsDir, "mafia-.log");
+        _logger.LogInformation("Simulation ready at {CurrentDate}", _gameState.CurrentDate);
     }
 }

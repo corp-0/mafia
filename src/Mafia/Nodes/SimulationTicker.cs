@@ -147,6 +147,7 @@ public partial class SimulationTicker : Node
             foreach (var system in _dailySystems)
                 system.Tick(date, _actionTrigger);
 
+            _logger.LogInformation("Day: {CurrentDate}", date);
             EmitSignal(SignalName.DayAdvanced, date.Year, date.Month, date.Day);
         }
 
@@ -154,12 +155,8 @@ public partial class SimulationTicker : Node
         _orchestrator.Tick(TICK_DURATION_DAYS, date);
 
         var pending = _orchestrator.TryPresent(IsAlive, IsPlayer);
-        _logger.LogInformation("One hour passed in simulation");
         if (pending is null)
-        {
-            _logger.LogInformation("No new events for player");
             return false;
-        }
 
         _pendingEvent = pending;
         Speed = SimulationSpeed.Paused;

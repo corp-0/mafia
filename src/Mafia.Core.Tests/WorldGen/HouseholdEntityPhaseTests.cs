@@ -28,7 +28,7 @@ public class HouseholdEntityPhaseTests : IDisposable
             World = _world,
             Config = config,
             Rng = rng,
-            NameGen = new NameGenerator(rng),
+            NameGen = new NameGenerator(rng, new TestNameRepository()),
             StatRoller = new StatRoller(rng, config),
             CharacterFactory = new CharacterFactory(_world)
         };

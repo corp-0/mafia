@@ -12,7 +12,7 @@ public class OrgSkeletonBuilderTests
     {
         var config = new WorldConfig { OrgCount = 5 };
         var rng = new SeededRandom(42);
-        var nameGen = new NameGenerator(rng);
+        var nameGen = new NameGenerator(rng, new TestNameRepository());
         var builder = new OrgSkeletonBuilder(rng, config);
 
         var orgs = builder.BuildAll(nameGen);
@@ -25,7 +25,7 @@ public class OrgSkeletonBuilderTests
     {
         var config = new WorldConfig { OrgCount = 5 };
         var rng = new SeededRandom(42);
-        var nameGen = new NameGenerator(rng);
+        var nameGen = new NameGenerator(rng, new TestNameRepository());
         var builder = new OrgSkeletonBuilder(rng, config);
 
         var orgs = builder.BuildAll(nameGen);
@@ -39,7 +39,7 @@ public class OrgSkeletonBuilderTests
     {
         var config = new WorldConfig { OrgCount = 3, MinCapos = 2, MaxCapos = 4 };
         var rng = new SeededRandom(42);
-        var nameGen = new NameGenerator(rng);
+        var nameGen = new NameGenerator(rng, new TestNameRepository());
         var builder = new OrgSkeletonBuilder(rng, config);
 
         var orgs = builder.BuildAll(nameGen);
@@ -65,7 +65,7 @@ public class OrgSkeletonBuilderTests
             MinAssociatesPerSoldier = 1, MaxAssociatesPerSoldier = 1
         };
         var rng = new SeededRandom(42);
-        var nameGen = new NameGenerator(rng);
+        var nameGen = new NameGenerator(rng, new TestNameRepository());
         var builder = new OrgSkeletonBuilder(rng, config);
 
         var orgs = builder.BuildAll(nameGen);

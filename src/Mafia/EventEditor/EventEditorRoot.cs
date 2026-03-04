@@ -1,8 +1,9 @@
 using Godot;
 using Mafia.Content;
+using Mafia.Core;
+using Mafia.EventEditor.Preview;
 using Mafia.EventEditor.Validation;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Mafia.EventEditor;
 
@@ -25,11 +26,21 @@ public partial class EventEditorRoot : Control
 
     private string _contentRootPath = "";
 
+    // Preview mode
+    private ScrollContainer _formScroll = null!;
+    private ScrollContainer _previewScroll = null!;
+    private EventPreviewPanel _previewPanel = null!;
+    private EventFileResolver _eventFileResolver = null!;
+    private Button _previewBtn = null!;
+    private Button _saveBtn = null!;
+    private Button _validateBtn = null!;
+    private bool _isPreviewMode;
+
     public override void _Ready()
     {
         AnchorsPreset = (int)LayoutPreset.FullRect;
 
-        _logger = NullLoggerFactory.Instance.CreateLogger<EventEditorRoot>();
+        _logger = GameServices.Get<ILoggerFactory>().CreateLogger<EventEditorRoot>();
         _contentRootPath = ContentBootstrapper.ResolveContentPath();
 
         // Main layout
@@ -85,13 +96,17 @@ public partial class EventEditorRoot : Control
 
         var toolbar = new HBoxContainer();
 
-        var saveBtn = new Button { Text = "Save (Ctrl+S)" };
-        saveBtn.Pressed += Save;
-        toolbar.AddChild(saveBtn);
+        _saveBtn = new Button { Text = "Save (Ctrl+S)" };
+        _saveBtn.Pressed += Save;
+        toolbar.AddChild(_saveBtn);
 
-        var validateBtn = new Button { Text = "Validate" };
-        validateBtn.Pressed += ValidateCurrentDto;
-        toolbar.AddChild(validateBtn);
+        _validateBtn = new Button { Text = "Validate" };
+        _validateBtn.Pressed += ValidateCurrentDto;
+        toolbar.AddChild(_validateBtn);
+
+        _previewBtn = new Button { Text = "Preview" };
+        _previewBtn.Pressed += TogglePreview;
+        toolbar.AddChild(_previewBtn);
 
         _statusLabel = new Label
         {
@@ -102,13 +117,14 @@ public partial class EventEditorRoot : Control
 
         rightPanel.AddChild(toolbar);
 
-        var scroll = new ScrollContainer
+        // Form scroll (default view)
+        _formScroll = new ScrollContainer
         {
             SizeFlagsHorizontal = SizeFlags.ExpandFill,
             SizeFlagsVertical = SizeFlags.ExpandFill,
             HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
         };
-        rightPanel.AddChild(scroll);
+        rightPanel.AddChild(_formScroll);
 
         var formMargin = new MarginContainer
         {
@@ -116,7 +132,7 @@ public partial class EventEditorRoot : Control
             SizeFlagsVertical = SizeFlags.ExpandFill,
         };
         formMargin.AddThemeConstantOverride("margin_right", 16);
-        scroll.AddChild(formMargin);
+        _formScroll.AddChild(formMargin);
 
         _form = new EventEditorForm
         {
@@ -124,6 +140,34 @@ public partial class EventEditorRoot : Control
             SizeFlagsVertical = SizeFlags.ExpandFill,
         };
         formMargin.AddChild(_form);
+
+        // Preview scroll (hidden by default)
+        _previewScroll = new ScrollContainer
+        {
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill,
+            HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
+            Visible = false,
+        };
+        rightPanel.AddChild(_previewScroll);
+
+        var previewMargin = new MarginContainer
+        {
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill,
+        };
+        previewMargin.AddThemeConstantOverride("margin_right", 16);
+        _previewScroll.AddChild(previewMargin);
+
+        _eventFileResolver = new EventFileResolver(_contentRootPath);
+
+        _previewPanel = new EventPreviewPanel
+        {
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsVertical = SizeFlags.ExpandFill,
+        };
+        _previewPanel.Init(_eventFileResolver);
+        previewMargin.AddChild(_previewPanel);
 
         _fileBrowser.SetRootPath(_contentRootPath);
         SetStatus("Ready. Select a file or create a new event.");
@@ -135,6 +179,23 @@ public partial class EventEditorRoot : Control
         {
             Save();
             GetViewport().SetInputAsHandled();
+        }
+    }
+
+    private void TogglePreview()
+    {
+        _isPreviewMode = !_isPreviewMode;
+        _formScroll.Visible = !_isPreviewMode;
+        _previewScroll.Visible = _isPreviewMode;
+        _saveBtn.Visible = !_isPreviewMode;
+        _validateBtn.Visible = !_isPreviewMode;
+        _previewBtn.Text = _isPreviewMode ? "Back to Editor" : "Preview";
+
+        if (_isPreviewMode)
+        {
+            _eventFileResolver.Invalidate();
+            var dto = _form.WriteToDto();
+            _previewPanel.PreviewEvent(dto);
         }
     }
 
@@ -159,6 +220,9 @@ public partial class EventEditorRoot : Control
             _currentFilePath = path;
             _hasUnsavedChanges = false;
             SetStatus($"Loaded: {Path.GetFileName(path)}");
+
+            if (_isPreviewMode)
+                _previewPanel.PreviewEvent(dto);
         }
         catch (Exception ex)
         {

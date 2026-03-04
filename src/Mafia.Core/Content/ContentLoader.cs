@@ -7,6 +7,7 @@ namespace Mafia.Core.Content;
 public sealed class ContentLoader(
     IEventDefinitionRepository eventRepository,
     IOpinionRuleRepository opinionRuleRepository,
+    NameRepository nameRepository,
     ContentMetadataStore metadata,
     ILogger<ContentLoader> logger)
 {
@@ -59,10 +60,24 @@ public sealed class ContentLoader(
             LoadMetadataFromPack(pack, "Tags", "tags.toml", metadata.Tags);
             LoadMetadataFromPack(pack, "Relations", "relations.toml", metadata.Relations);
             LoadMetadataFromPack(pack, "Stats", "stats.toml", metadata.Stats);
+            LoadNamesFromPack(pack);
             LoadDirectoryContent(pack, "Events", EventTomlReader.Read, eventRepository.Register);
             LoadDirectoryContent(pack, "Opinions", OpinionRuleTomlReader.Read, opinionRuleRepository.Register);
             
             ContentLoaded?.Invoke();
+        }
+    }
+
+    private void LoadNamesFromPack(ContentPackDefinition pack)
+    {
+        var directory = Path.Combine(pack.DirectoryPath, "Names");
+        if (!Directory.Exists(directory)) return;
+
+        foreach (var file in Directory.EnumerateFiles(directory, "*.toml", SearchOption.AllDirectories))
+        {
+            var toml = File.ReadAllText(file);
+            var dto = NamesTomlReader.Deserialize(toml);
+            nameRepository.Register(dto);
         }
     }
 

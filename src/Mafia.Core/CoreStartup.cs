@@ -16,6 +16,8 @@ public static class CoreStartup
         services.AddSingleton<IOpinionRuleRepository, OpinionRuleRepository>();
         services.AddSingleton<IEventDefinitionRepository, EventDefinitionRepository>();
         services.AddSingleton<ContentMetadataStore>();
+        services.AddSingleton<NameRepository>();
+        services.AddSingleton<INameRepository>(sp => sp.GetRequiredService<NameRepository>());
         services.AddSingleton<ContentLoader>();
 
         // Event engine

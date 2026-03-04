@@ -7,11 +7,13 @@ namespace Mafia.Core.Tests.WorldGen;
 
 public class NameGeneratorTests
 {
+    private static readonly TestNameRepository Names = new();
+
     [Fact]
     public void GenerateUniqueName_NeverReturnsDuplicates()
     {
         var rng = new SeededRandom(42);
-        var gen = new NameGenerator(rng);
+        var gen = new NameGenerator(rng, Names);
         var names = new HashSet<string>();
 
         for (var i = 0; i < 200; i++)
@@ -25,7 +27,7 @@ public class NameGeneratorTests
     public void PickUniqueSurname_ReturnsDistinctSurnames()
     {
         var rng = new SeededRandom(42);
-        var gen = new NameGenerator(rng);
+        var gen = new NameGenerator(rng, Names);
         var surnames = new HashSet<string>();
 
         for (var i = 0; i < 10; i++)
@@ -39,7 +41,7 @@ public class NameGeneratorTests
     public void PickUniqueSurname_RespectsExclusions()
     {
         var rng = new SeededRandom(42);
-        var gen = new NameGenerator(rng);
+        var gen = new NameGenerator(rng, Names);
         var excluded = new HashSet<string> { "Corleone", "Tattaglia" };
 
         for (var i = 0; i < 10; i++)
@@ -54,7 +56,7 @@ public class NameGeneratorTests
     public void PickFirstName_ReturnsDifferentNamesForGenders()
     {
         var rng = new SeededRandom(42);
-        var gen = new NameGenerator(rng);
+        var gen = new NameGenerator(rng, Names);
 
         var maleNames = Enumerable.Range(0, 50).Select(_ => gen.PickFirstName(Sex.Male)).ToHashSet();
         var femaleNames = Enumerable.Range(0, 50).Select(_ => gen.PickFirstName(Sex.Female)).ToHashSet();

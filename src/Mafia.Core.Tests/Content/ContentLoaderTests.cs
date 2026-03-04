@@ -11,12 +11,13 @@ public class ContentLoaderTests
 {
     private readonly EventDefinitionRepository _eventRepository = new();
     private readonly OpinionRuleRepository _opinionRepository = new();
+    private readonly NameRepository _nameRepository = new();
     private readonly ContentMetadataStore _metadata = new();
     private readonly ContentLoader _loader;
 
     public ContentLoaderTests()
     {
-        _loader = new ContentLoader(_eventRepository, _opinionRepository, _metadata, NullLogger<ContentLoader>.Instance);
+        _loader = new ContentLoader(_eventRepository, _opinionRepository, _nameRepository, _metadata, NullLogger<ContentLoader>.Instance);
     }
 
     private const string MANIFEST_TOML = """

@@ -1,5 +1,6 @@
 using fennecs;
 using FluentAssertions;
+using Mafia.Core.Content.Registries;
 using Mafia.Core.WorldGen;
 using Mafia.Core.WorldGen.Phases;
 using Mafia.Core.Ecs.Components.Identity;
@@ -12,6 +13,7 @@ namespace Mafia.Core.Tests.WorldGen;
 public class WorldGeneratorTests : IDisposable
 {
     private readonly World _world = new();
+    private readonly INameRepository _names = new TestNameRepository();
 
     public void Dispose() => _world.Dispose();
 
@@ -19,7 +21,7 @@ public class WorldGeneratorTests : IDisposable
     {
         config ??= new WorldConfig();
         var rng = new SeededRandom(config.Seed);
-        var nameGen = new NameGenerator(rng);
+        var nameGen = new NameGenerator(rng, _names);
         var statRoller = new StatRoller(rng, config);
         var factory = new CharacterFactory(_world);
 
@@ -59,8 +61,8 @@ public class WorldGeneratorTests : IDisposable
     {
         var config = new WorldConfig { TargetPopulation = 200, Seed = 123, OrgCount = 2 };
 
-        var roster1 = WorldGenerator.Generate(new World(), config);
-        var roster2 = WorldGenerator.Generate(new World(), config);
+        var roster1 = WorldGenerator.Generate(new World(), _names, config);
+        var roster2 = WorldGenerator.Generate(new World(), _names, config);
 
         roster1.Count.Should().Be(roster2.Count);
 
@@ -183,7 +185,7 @@ public class WorldGeneratorTests : IDisposable
     [Fact]
     public void Generate_DefaultConfig_ProducesWorld()
     {
-        var roster = WorldGenerator.Generate(_world);
+        var roster = WorldGenerator.Generate(_world, _names);
         roster.Count.Should().BeGreaterThan(0);
     }
 }

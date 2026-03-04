@@ -1,4 +1,5 @@
 using fennecs;
+using Mafia.Core.Content.Registries;
 using Mafia.Core.WorldGen.Phases;
 using Microsoft.Extensions.Logging;
 
@@ -6,12 +7,12 @@ namespace Mafia.Core.WorldGen;
 
 public static class WorldGenerator
 {
-    public static Dictionary<string, Entity> Generate(World world, WorldConfig? config = null, ILogger? logger = null)
+    public static Dictionary<string, Entity> Generate(World world, INameRepository nameRepository, WorldConfig? config = null, ILogger? logger = null)
     {
         config ??= new WorldConfig();
 
         var rng = new SeededRandom(1018);
-        var nameGen = new NameGenerator(rng);
+        var nameGen = new NameGenerator(rng, nameRepository);
         var statRoller = new StatRoller(rng, config);
         var factory = new CharacterFactory(world);
 
